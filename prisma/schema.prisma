@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostTypes {
+  Video
+  Short
+  Image
+  Text
+  ImageText
+  Audio
+}
+
+model Channels {
+  id     String  @id @default(uuid(7)) @db.Uuid
+  name   String  @default("Default Channel Name") // todo when resetting delete default
+  avatar String  @default("") // todo remove default
+  posts  Posts[]
+}
+
+model Posts {
+  id   String    @id @default(uuid(7)) @db.Uuid
+  type PostTypes
+
+  Channels   Channels @relation(fields: [channelsId], references: [id])
+  channelsId String   @db.Uuid
+
+  likes     BigInt   @default(0)
+  createdAt DateTime @default(now())
+
+  video     VideoPost?
+  short     ShortPost?
+  image     ImagePost?
+  text      TextPost?
+  imageText ImageTextPost?
+  audio     AudioPost?
+}
+
+model VideoPost {
+  id          String @id @default(uuid(7)) @db.Uuid
+  mediaUrl    String
+  title       String
+  description String
+  duration    String @default("12:34") // todo for real one remove defaults.
+  thumbnail   String @default("") // todo remove default
+  views       BigInt @default(0)
+  post        Posts  @relation(fields: [postId], references: [id])
+  postId      String @unique @db.Uuid
+}
+
+model ShortPost {
+  id       String @id @default(uuid(7)) @db.Uuid
+  mediaUrl String
+  // tbd
+  post     Posts  @relation(fields: [postId], references: [id])
+  postId   String @unique @db.Uuid
+}
+
+//tbd
+model ImagePost {
+  id     String @id @default(uuid(7)) @db.Uuid
+  url    String
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+}
+
+//tbd
+model TextPost {
+  id     String @id @default(uuid(7)) @db.Uuid
+  text   String
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+}
+
+// tbd
+model ImageTextPost {
+  id     String @id @default(uuid(7)) @db.Uuid
+  url    String
+  text   String
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+}
+
+// tbd
+model AudioPost {
+  id     String @id @default(uuid(7)) @db.Uuid
+  url    String
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+}
