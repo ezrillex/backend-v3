@@ -23,7 +23,7 @@ export class VideosService {
       include: {
         post: {
           include: {
-            Channels: true,
+            channels: true,
           },
         },
       },

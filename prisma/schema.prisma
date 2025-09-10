@@ -34,7 +34,7 @@ model Posts {
   id   String    @id @default(uuid(7)) @db.Uuid
   type PostTypes
 
-  Channels   Channels @relation(fields: [channelsId], references: [id])
+  channels   Channels @relation(fields: [channelsId], references: [id])
   channelsId String   @db.Uuid
 
   likes     BigInt   @default(0)
