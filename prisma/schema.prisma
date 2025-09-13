@@ -24,10 +24,13 @@ enum PostTypes {
 }
 
 model Channels {
-  id     String  @id @default(uuid(7)) @db.Uuid
-  name   String  @default("Default Channel Name") // todo when resetting delete default
-  avatar String  @default("") // todo remove default
-  posts  Posts[]
+  id      String  @id @default(uuid(7)) @db.Uuid
+  clerkId String  @default("") // todo remove default
+  name    String  @default("Nuevo Canal") // todo when resetting delete default
+  avatar  String  @default("") // todo remove default
+  posts   Posts[]
+
+  // todo index clerk id
 }
 
 model Posts {

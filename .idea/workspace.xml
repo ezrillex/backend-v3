@@ -4,13 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="prototype for basic usage / viewing">
+    <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.controller.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/videos/videos.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/dto/create-video.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/dto/update-video.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/entities/video.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/videos.controller.spec.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/videos.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/videos.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/videos.service.spec.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/videos/videos.service.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,11 +79,6 @@
     <configuration name="localhost:5555" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5555">
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JavaScript Debug.localhost:5555" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -102,7 +107,11 @@
       <workItem from="1757305800103" duration="24000" />
       <workItem from="1757305911769" duration="1454000" />
       <workItem from="1757373039654" duration="22000" />
-      <workItem from="1757462053202" duration="12863000" />
+      <workItem from="1757462053202" duration="13024000" />
+      <workItem from="1757534482994" duration="11413000" />
+      <workItem from="1757611905068" duration="1358000" />
+      <workItem from="1757622953208" duration="11878000" />
+      <workItem from="1757696908795" duration="10899000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -128,7 +137,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757180126428</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response">
+      <option name="closed" value="true" />
+      <created>1757481154181</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1757481154181</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,6 +157,7 @@
     </ignored-roots>
     <MESSAGE value="initial commit" />
     <MESSAGE value="prototype for basic usage / viewing" />
-    <option name="LAST_COMMIT_MESSAGE" value="prototype for basic usage / viewing" />
+    <MESSAGE value="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response" />
   </component>
 </project>
