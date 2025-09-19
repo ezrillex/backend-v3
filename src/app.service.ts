@@ -13,10 +13,10 @@ export class AppService {
       select: {
         id: true,
         type: true,
+        title: true,
         channels: true,
         video: {
           select: {
-            title: true,
             duration: true,
             thumbnail: true,
             views: true,

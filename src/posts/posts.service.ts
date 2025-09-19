@@ -20,6 +20,7 @@ export class PostsService {
       select: {
         type: true,
         likes: true,
+        title: true,
         createdAt: true,
         channels: {
           select: {
@@ -33,6 +34,7 @@ export class PostsService {
 
     const cleanData = {
       type: data.type,
+      title: data.title,
       likes: data.likes.toString(),
       createdAt: data.createdAt,
       channel: data.channels as { id: string; name: string; avatar: string },
@@ -47,7 +49,6 @@ export class PostsService {
         });
         cleanData['video'] = {
           mediaUrl: video.mediaUrl,
-          title: video.title,
           description: video.description,
           duration: video.duration,
           thumbnail: video.thumbnail,

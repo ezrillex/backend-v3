@@ -4,23 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response">
+    <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/dto/create-video.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/dto/update-video.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/entities/video.entity.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.controller.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.controller.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.service.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/videos/videos.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/dtos/channelpost/channelPost.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/dtos/updateChannel/updateChannel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/dtos/channelpost/channelpost.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/dtos/updateChannel/channelpost.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/portal.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/portal.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/posts.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +55,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/CODE/backend-v3/torrent&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -71,7 +68,12 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\CODE\backend-v3\torrent" />
+      <recent name="C:\CODE\backend-v3\torrent\files" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\CODE\backend-v3\torrent" />
       <recent name="C:\CODE\backend-v3" />
     </key>
   </component>
@@ -83,7 +85,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-WS-252.25557.126" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-WS-252.26199.162" />
       </set>
     </attachedChunks>
   </component>
@@ -111,7 +113,15 @@
       <workItem from="1757534482994" duration="11413000" />
       <workItem from="1757611905068" duration="1358000" />
       <workItem from="1757622953208" duration="11878000" />
-      <workItem from="1757696908795" duration="10899000" />
+      <workItem from="1757696908795" duration="11023000" />
+      <workItem from="1757803553434" duration="2757000" />
+      <workItem from="1757823023945" duration="4359000" />
+      <workItem from="1757877192357" duration="1219000" />
+      <workItem from="1757911347653" duration="4469000" />
+      <workItem from="1757956159993" duration="707000" />
+      <workItem from="1757985558329" duration="6911000" />
+      <workItem from="1758257305010" duration="743000" />
+      <workItem from="1758258365307" duration="599000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -145,7 +155,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757481154181</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api.">
+      <option name="closed" value="true" />
+      <created>1757786312250</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1757786312250</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,6 +176,7 @@
     <MESSAGE value="initial commit" />
     <MESSAGE value="prototype for basic usage / viewing" />
     <MESSAGE value="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response" />
+    <MESSAGE value="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api." />
+    <option name="LAST_COMMIT_MESSAGE" value="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api." />
   </component>
 </project>

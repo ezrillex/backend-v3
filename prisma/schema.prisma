@@ -40,8 +40,13 @@ model Posts {
   channels   Channels @relation(fields: [channelsId], references: [id])
   channelsId String   @db.Uuid
 
-  likes     BigInt   @default(0)
-  createdAt DateTime @default(now())
+  title     String  @default("Titulo Predeterminado") // todo remove this
+  published Boolean @default(false)
+  kilobytes Int     @default(0) // some items like text will be set to 0 so this default is ok
+
+  likes       BigInt   @default(0)
+  createdAt   DateTime @default(now())
+  publishedAt DateTime @default(now())
 
   video     VideoPost?
   short     ShortPost?
@@ -54,7 +59,6 @@ model Posts {
 model VideoPost {
   id          String @id @default(uuid(7)) @db.Uuid
   mediaUrl    String
-  title       String
   description String
   duration    String @default("12:34") // todo for real one remove defaults.
   thumbnail   String @default("") // todo remove default
