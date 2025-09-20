@@ -54,7 +54,6 @@ model Posts {
   publishedAt DateTime @default(now())
 
   video     VideoPost?
-  short     ShortPost?
   image     ImagePost?
   text      TextPost?
   imageText ImageTextPost?
@@ -71,14 +70,6 @@ model VideoPost {
   views       BigInt     @default(0)
   post        Posts      @relation(fields: [postId], references: [id])
   postId      String     @unique @db.Uuid
-}
-
-model ShortPost {
-  id       String @id @default(uuid(7)) @db.Uuid
-  mediaUrl String
-  // tbd
-  post     Posts  @relation(fields: [postId], references: [id])
-  postId   String @unique @db.Uuid
 }
 
 //tbd

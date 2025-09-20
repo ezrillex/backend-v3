@@ -7,20 +7,25 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreateVideoRepost } from './dto/create-video.repost';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @UseGuards(AuthGuard)
-  @Post('video')
-  create(@Body() data: CreateVideoRepost) {
-    return this.postsService.createVideoPost(data);
+  @Post('video/youtube')
+  create(
+    @Req() request: AuthenticatedAccount,
+    @Body() data: CreateVideoRepost,
+  ) {
+    return this.postsService.createVideoRepost(request.channel.id, data);
   }
 
   @Get()

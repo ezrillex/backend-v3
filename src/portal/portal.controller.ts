@@ -12,11 +12,7 @@ import { PortalService } from './portal.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { UpdateChannel } from './dtos/updateChannel/updateChannel';
 import { GetPostsPaginated } from './dtos/getPostsPaginated/getPostsPaginated';
-
-type AuthenticatedAccount = {
-  channel: { id: string; name: string; avatar: string };
-  auth: object;
-};
+import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
 
 @Controller('portal')
 export class PortalController {

@@ -4,17 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api.">
-      <change afterPath="$PROJECT_DIR$/src/posts/dto/create-video.repost.ts" afterDir="false" />
+    <list default="true" id="f4a85e7b-141e-474e-87d6-b183c5fb4897" name="Changes" comment="feat: create video repost api. pending images.  chore: prisma to singleton. feat: log mem usage. refactor: AuthenticatedAccount.ts feat: adjust input lenghts dto create video. deprecated: shorts as posts option.">
+      <change afterPath="$PROJECT_DIR$/src/auth/AuthenticatedAccount.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/posts/dto/create-post.dto.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/posts/dto/update-post.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/dto/update-post.dto.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analytics/analytics.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/analytics/analytics.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/portal.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portal/portal.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/dto/create-video.repost.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/dto/create-video.repost.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/posts/posts.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/posts.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.module.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/posts/posts.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/prisma/prisma.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/prisma/prisma.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,160 +30,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;ezrillex&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/ezrillex/backend-v3.git&quot;,
-    &quot;accountId&quot;: &quot;6c94929f-a87d-41e6-adde-9ccc527b2c51&quot;
-  }
-}</component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 3
-}</component>
-  <component name="ProjectId" id="32AA1UED4Hxt8NnSEpO0jjIP2ui" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "JavaScript Debug.localhost:5555.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/CODE/backend-v3/torrent",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\ezraa\\WebstormProjects\\backend-v3\\node_modules\\prettier",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "ts.external.directory.path": "C:\\Users\\ezraa\\WebstormProjects\\backend-v3\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+    "prettierjs.PrettierConfiguration.Package": "C:\\CODE\\backend-v3\\node_modules\\prettier",
+    "ts.external.directory.path": "C:\\CODE\\backend-v3\\node_modules\\typescript\\lib"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\CODE\backend-v3\torrent" />
-      <recent name="C:\CODE\backend-v3\torrent\files" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\CODE\backend-v3\torrent" />
-      <recent name="C:\CODE\backend-v3" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="localhost:5555" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5555">
-      <method v="2" />
-    </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-WS-252.26199.162" />
-      </set>
-    </attachedChunks>
-  </component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="" />
-      <created>1756852788667</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1756852788667</updated>
-      <workItem from="1756852789578" duration="1072000" />
-      <workItem from="1756854565138" duration="200000" />
-      <workItem from="1756854768695" duration="978000" />
-      <workItem from="1756856815026" duration="7170000" />
-      <workItem from="1756869103156" duration="23000" />
-      <workItem from="1756918448010" duration="12143000" />
-      <workItem from="1757090761871" duration="5618000" />
-      <workItem from="1757112859553" duration="9552000" />
-      <workItem from="1757180060031" duration="3161000" />
-      <workItem from="1757189410984" duration="4446000" />
-      <workItem from="1757305800103" duration="24000" />
-      <workItem from="1757305911769" duration="1454000" />
-      <workItem from="1757373039654" duration="22000" />
-      <workItem from="1757462053202" duration="13024000" />
-      <workItem from="1757534482994" duration="11413000" />
-      <workItem from="1757611905068" duration="1358000" />
-      <workItem from="1757622953208" duration="11878000" />
-      <workItem from="1757696908795" duration="11023000" />
-      <workItem from="1757803553434" duration="2757000" />
-      <workItem from="1757823023945" duration="4359000" />
-      <workItem from="1757877192357" duration="1219000" />
-      <workItem from="1757911347653" duration="4469000" />
-      <workItem from="1757956159993" duration="707000" />
-      <workItem from="1757985558329" duration="6911000" />
-      <workItem from="1758257305010" duration="743000" />
-      <workItem from="1758258365307" duration="599000" />
-      <workItem from="1758305184933" duration="187000" />
-      <workItem from="1758309107956" duration="11000" />
-      <workItem from="1758321257655" duration="6391000" />
-    </task>
-    <task id="LOCAL-00001" summary="initial commit">
-      <option name="closed" value="true" />
-      <created>1756854881074</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1756854881074</updated>
-    </task>
-    <task id="LOCAL-00002" summary="initial commit">
-      <option name="closed" value="true" />
-      <created>1756854924939</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1756854924939</updated>
-    </task>
-    <task id="LOCAL-00003" summary="prototype for basic usage / viewing">
-      <option name="closed" value="true" />
-      <created>1757180126427</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1757180126428</updated>
-    </task>
-    <task id="LOCAL-00004" summary="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response">
-      <option name="closed" value="true" />
-      <created>1757481154181</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1757481154181</updated>
-    </task>
-    <task id="LOCAL-00005" summary="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api.">
-      <option name="closed" value="true" />
-      <created>1757786312250</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1757786312250</updated>
-    </task>
-    <option name="localTasksCounter" value="6" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <ignored-roots>
-      <path value="$PROJECT_DIR$" />
-    </ignored-roots>
-    <MESSAGE value="initial commit" />
-    <MESSAGE value="prototype for basic usage / viewing" />
-    <MESSAGE value="fix uppercase on Channels. refactor app controller into service. feat: multiple segments on home api.  feat use post api instead to get the videos, universal get point, less id handling. feat: reduce data in response" />
-    <MESSAGE value="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api." />
-    <option name="LAST_COMMIT_MESSAGE" value="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api." />
   </component>
 </project>

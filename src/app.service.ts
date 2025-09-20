@@ -1,9 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AppService {
   constructor(private readonly prisma: PrismaService) {}
+
+  @Cron('* * * * *')
+  system() {
+    const usage = process.memoryUsage();
+    const usedMB = (usage.heapUsed / 1_000_000).toFixed(2);
+    const totalMB = (usage.heapTotal / 1_000_000).toFixed(2);
+    const heapUsage = ((usage.heapUsed / usage.heapTotal) * 100).toFixed(2);
+    const systemUsage = ((usage.heapUsed / 512_000_000) * 100).toFixed(2);
+    console.log(
+      `Heap Usage: ${heapUsage}% (${usedMB}/${totalMB} MB) | Memory Usage: ${systemUsage}% (${usedMB}/512 MB)`,
+    );
+  }
 
   async getHomePage(): Promise<object> {
     let data = await this.prisma.posts.findMany({
@@ -22,7 +35,6 @@ export class AppService {
             views: true,
           },
         },
-        short: true,
         image: true,
         text: true,
         imageText: true,
@@ -35,12 +47,8 @@ export class AppService {
       take: 11,
     });
 
-    // todo remove this later
-    data = [...data, ...data, ...data, ...data];
-    data.pop();
-
     // todo count how many records, choose 5 at random through a randomizer
-    let channels = await this.prisma.channels.findMany({
+    const channels = await this.prisma.channels.findMany({
       include: {
         _count: {
           select: {
@@ -50,14 +58,6 @@ export class AppService {
       },
       take: 5,
     });
-    // todo undo this was just for testing
-    channels = [
-      ...channels,
-      ...channels,
-      ...channels,
-      ...channels,
-      ...channels,
-    ];
 
     return {
       latest: data.map((post) => {
@@ -65,7 +65,11 @@ export class AppService {
           id: post.id,
           type: post.type,
           createdAt: post.createdAt,
-          channel: post.channels,
+          channel: {
+            id: post.channels.id,
+            name: post.channels.name,
+            avatar: post.channels.avatar,
+          },
         };
         switch (post.type) {
           case 'Video':
