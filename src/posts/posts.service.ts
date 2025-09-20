@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
+import { CreateVideoRepost } from './dto/create-video.repost';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createPostDto: CreatePostDto) {
+  createVideoPost(data: CreateVideoRepost) {
     return 'This action adds a new post';
   }
 

@@ -5,17 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="40225c95-3115-44c0-a5f5-8f8dcbf86138" name="Changes" comment="remove video resource api. clerk backend integration. first account request database create. portal resource api. update channel name api.">
+      <change afterPath="$PROJECT_DIR$/src/posts/dto/create-video.repost.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/portal/dtos/channelpost/channelPost.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/dtos/updateChannel/updateChannel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/portal/dtos/channelpost/channelpost.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/dtos/updateChannel/channelpost.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/portal/portal.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/portal/portal.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/portal/portal.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/dto/create-post.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/dto/update-post.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/dto/update-post.dto.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/posts/posts.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.controller.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/posts/posts.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/posts/posts.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -35,7 +33,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ezrillex/backend-v3.git&quot;,
-    &quot;accountId&quot;: &quot;9959a9d5-d3b7-4d0b-a6f6-651df42b7375&quot;
+    &quot;accountId&quot;: &quot;6c94929f-a87d-41e6-adde-9ccc527b2c51&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -46,27 +44,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;JavaScript Debug.localhost:5555.executor&quot;: &quot;Debug&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/CODE/backend-v3/torrent&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\CODE\\backend-v3\\node_modules\\prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\CODE\\backend-v3\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript Debug.localhost:5555.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/CODE/backend-v3/torrent",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\ezraa\\WebstormProjects\\backend-v3\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "ts.external.directory.path": "C:\\Users\\ezraa\\WebstormProjects\\backend-v3\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\CODE\backend-v3\torrent" />
@@ -122,6 +120,9 @@
       <workItem from="1757985558329" duration="6911000" />
       <workItem from="1758257305010" duration="743000" />
       <workItem from="1758258365307" duration="599000" />
+      <workItem from="1758305184933" duration="187000" />
+      <workItem from="1758309107956" duration="11000" />
+      <workItem from="1758321257655" duration="6391000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
