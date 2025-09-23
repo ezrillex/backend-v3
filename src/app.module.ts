@@ -6,6 +6,7 @@ import { PostsModule } from './posts/posts.module';
 import { PortalModule } from './portal/portal.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma/prisma.module';
+import { ManagedFilesModule } from './managed-files/managed-files.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PortalModule,
     ScheduleModule.forRoot(),
     PrismaModule,
+    ManagedFilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

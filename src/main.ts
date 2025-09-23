@@ -18,6 +18,10 @@ async function bootstrap() {
     credentials: false,
   });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  // todo test frontend up to what size does it compress images, i.e. do we need more capacity?
+  // app.useBodyParser('application/json', {
+  //   bodyLimit: 10_000_000,
+  // });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -28,6 +28,11 @@ enum VideoTypes {
   YoutubeRepost
 }
 
+enum Prefixes {
+  img
+  wtt
+}
+
 model Channels {
   id      String  @id @default(uuid(7)) @db.Uuid
   clerkId String  @default("") // todo remove default
@@ -63,13 +68,28 @@ model Posts {
 model VideoPost {
   id          String     @id @default(uuid(7)) @db.Uuid
   type        VideoTypes @default(HostedVideo) // todo maybe able to remove on startover
-  mediaUrl    String // does this also applies for torrents?
+  mediaUrl    String? // only for reposted videos
   description String
   duration    String     @default("12:34") // todo for real one remove defaults.
-  thumbnail   String     @default("") // todo remove default
-  views       BigInt     @default(0)
-  post        Posts      @relation(fields: [postId], references: [id])
-  postId      String     @unique @db.Uuid
+
+  views  BigInt @default(0)
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+
+  torrentFile   ManagedFile? @relation("torrents", fields: [torrentFileId], references: [id])
+  torrentFileId String?      @db.Uuid
+
+  thumbnailFile   ManagedFile @relation("thumbnails", fields: [thumbnailFileId], references: [id])
+  thumbnailFileId String      @db.Uuid
+}
+
+model ManagedFile {
+  id     String   @id @default(uuid(7)) @db.Uuid
+  prefix Prefixes
+  hash   String   @unique
+
+  thumbnails VideoPost[] @relation("thumbnails")
+  torrents   VideoPost[] @relation("torrents")
 }
 
 //tbd

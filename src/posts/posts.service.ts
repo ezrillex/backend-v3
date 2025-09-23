@@ -10,16 +10,18 @@ import sharp from 'sharp';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { toSeconds, parse } from 'iso8601-duration';
+import { ManagedFilesService } from '../managed-files/managed-files.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly httpService: HttpService,
+    private readonly files: ManagedFilesService,
   ) {}
 
   async createVideoRepost(channelId: string, data: CreateVideoRepost) {
-    // 1. validar la imagen y tratar de cargarla. validar dimensiones y compresion.
+    // 1. validar la imagen validar dimensiones y compresion.
     let imageBuffer;
     let img;
     try {
@@ -39,8 +41,6 @@ export class PostsService {
     } catch (err) {
       return new BadRequestException(err);
     }
-
-    // upload image to bucket and return url. // todo figure out what happens when future steps fails.
 
     // 2. validar id de youtube con la api, obtengo duracion. ojo esta call no necesito snippet solo contentDetails.
     // todo cache calls to this api. for now volume is low for 10k daily limit.
@@ -67,8 +67,10 @@ export class PostsService {
         'Video id belongs to more than one video',
       );
     }
-
     // console.log(result.data);
+
+    // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
+    const file = await this.files.createManagedFile('img', imageBuffer);
 
     // todo hacer en frontend y preview al usuario.
     // await img
@@ -106,8 +108,8 @@ export class PostsService {
             duration: readableDuration,
             description: data.description,
             mediaUrl: 'https://www.youtube.com/watch?v=' + data.youtubeVideoID,
-            thumbnail: 'linktoimage', // todo this
             type: 'YoutubeRepost',
+            thumbnailFileId: file.id,
           },
         },
       },
@@ -118,6 +120,7 @@ export class PostsService {
       video: {
         ...createResult.video,
         views: 0,
+        thumbnailUrl: file.url,
       },
     }; // return 201 created?
   }
@@ -144,7 +147,7 @@ export class PostsService {
   }
 
   async findOne(id: string) {
-    let data = await this.prisma.posts.findFirstOrThrow({
+    const data = await this.prisma.posts.findFirstOrThrow({
       select: {
         type: true,
         likes: true,
@@ -179,7 +182,7 @@ export class PostsService {
           mediaUrl: video.mediaUrl,
           description: video.description,
           duration: video.duration,
-          thumbnail: video.thumbnail,
+          // thumbnail: video.thumbnail, // todo pass thumbnail with new format
           views: video.views.toString(),
           type: video.type,
         };
