@@ -2,12 +2,12 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   S3Client,
-  ListBucketsCommand,
   ListObjectsV2Command,
   GetObjectCommand,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import * as crypto from 'crypto';
+import { prefixToExtMime } from '../utils/utils';
 
 // que voy a guardar aqui: imagenes, audios????, torrent files,
 @Injectable()
@@ -47,7 +47,7 @@ export class ManagedFilesService implements OnModuleInit {
     let id: string;
     if (exists !== null) {
       // branch if duplicated
-      const meta = this.prefixToExtMime(exists.prefix);
+      const meta = prefixToExtMime(exists.prefix);
       filename = exists.id + meta.ext;
       id = exists.id;
     } else {
@@ -62,7 +62,7 @@ export class ManagedFilesService implements OnModuleInit {
         },
       });
 
-      const meta = this.prefixToExtMime(prefix);
+      const meta = prefixToExtMime(prefix);
       filename = newRecordId.id + meta.ext;
       id = newRecordId.id;
 
@@ -86,25 +86,6 @@ export class ManagedFilesService implements OnModuleInit {
       id: id,
       url: `https://dev-vcris.25127928.xyz/${prefix}/${filename}`, // todo base url from .env
     };
-  }
-
-  prefixToExtMime(prefix: string) {
-    if (prefix === 'img') {
-      return {
-        ext: '.webp',
-        mime: 'image/webp',
-      };
-    } else if (prefix === 'wtt') {
-      return {
-        ext: '.torrent',
-        mime: 'application/x-bittorrent',
-      };
-    } else {
-      return {
-        ext: '.txt',
-        mime: 'text/plain',
-      };
-    }
   }
 
   // GET un archivo / retorna datos necesarios para utilizar el archivo.

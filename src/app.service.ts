@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
+import { fileMetaToUrl } from './utils/utils';
 
 @Injectable()
 export class AppService {
@@ -31,7 +32,7 @@ export class AppService {
         video: {
           select: {
             duration: true,
-            thumbnail: true,
+            thumbnailFile: true,
             views: true,
           },
         },
@@ -73,10 +74,13 @@ export class AppService {
         };
         switch (post.type) {
           case 'Video':
-            clean['video'] = {
-              ...post.video,
-              views: post.video?.views?.toString(), // cast to string
-            };
+            if (post.video) { // so the complier stops complaining
+              clean['video'] = {
+                duration: post.video.duration,
+                thumbnail: fileMetaToUrl(post.video.thumbnailFile),
+                views: post.video.views.toString(), // cast to string
+              };
+            }
         }
 
         return clean;

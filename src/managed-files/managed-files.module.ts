@@ -7,5 +7,6 @@ import { PrismaModule } from '../prisma/prisma.module';
   controllers: [ManagedFilesController],
   providers: [ManagedFilesService],
   imports: [PrismaModule],
+  exports: [ManagedFilesService],
 })
 export class ManagedFilesModule {}
