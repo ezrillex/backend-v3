@@ -11,6 +11,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { toSeconds, parse } from 'iso8601-duration';
 import { ManagedFilesService } from '../managed-files/managed-files.service';
+import { fileMetaToUrl } from '../utils/utils';
 
 @Injectable()
 export class PostsService {
@@ -22,8 +23,8 @@ export class PostsService {
 
   async createVideoRepost(channelId: string, data: CreateVideoRepost) {
     // 1. validar la imagen validar dimensiones y compresion.
-    let imageBuffer;
-    let img;
+    let imageBuffer: Buffer;
+    let img: sharp.Sharp;
     try {
       imageBuffer = Buffer.from(data.thumbnail, 'base64');
       img = sharp(imageBuffer);
@@ -177,12 +178,25 @@ export class PostsService {
           where: {
             postId: id,
           },
+          select: {
+            mediaUrl: true,
+            description: true,
+            duration: true,
+            views: true,
+            type: true,
+            thumbnailFile: {
+              select: {
+                prefix: true,
+                id: true,
+              },
+            },
+          },
         });
         cleanData['video'] = {
           mediaUrl: video.mediaUrl,
           description: video.description,
           duration: video.duration,
-          // thumbnail: video.thumbnail, // todo pass thumbnail with new format
+          thumbnail: fileMetaToUrl(video.thumbnailFile), // todo pass thumbnail with new format
           views: video.views.toString(),
           type: video.type,
         };
