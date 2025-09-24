@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { Cron } from '@nestjs/schedule';
-import { fileMetaToUrl } from './utils/utils';
+import { fileMetaToUrl, fileMetaToUrlFallback } from './utils/utils';
 
 @Injectable()
 export class AppService {
@@ -20,7 +20,7 @@ export class AppService {
   }
 
   async getHomePage(): Promise<object> {
-    let data = await this.prisma.posts.findMany({
+    const data = await this.prisma.posts.findMany({
       where: {
         type: 'Video',
       },
@@ -28,7 +28,13 @@ export class AppService {
         id: true,
         type: true,
         title: true,
-        channels: true,
+        channels: {
+          select: {
+            id: true,
+            name: true,
+            avatarFile: true,
+          },
+        },
         video: {
           select: {
             duration: true,
@@ -51,6 +57,7 @@ export class AppService {
     // todo count how many records, choose 5 at random through a randomizer
     const channels = await this.prisma.channels.findMany({
       include: {
+        avatarFile: true,
         _count: {
           select: {
             posts: true,
@@ -69,12 +76,16 @@ export class AppService {
           channel: {
             id: post.channels.id,
             name: post.channels.name,
-            avatar: post.channels.avatar,
+            avatar: fileMetaToUrlFallback(
+              post.channels.avatarFile,
+              'https://dev-vcris.25127928.xyz/img/default_avatar.webp', // todo use .env to configure this
+            ),
           },
         };
         switch (post.type) {
           case 'Video':
-            if (post.video) { // so the complier stops complaining
+            if (post.video) {
+              // so the complier stops complaining
               clean['video'] = {
                 duration: post.video.duration,
                 thumbnail: fileMetaToUrl(post.video.thumbnailFile),
@@ -89,7 +100,10 @@ export class AppService {
         return {
           id: channel.id,
           name: channel.name,
-          avatar: channel.avatar,
+          avatar: fileMetaToUrlFallback(
+            channel.avatarFile,
+            'https://dev-vcris.25127928.xyz/img/default_avatar.webp', // todo use .env for this value
+          ),
           postsCount: channel._count.posts,
         };
       }),
