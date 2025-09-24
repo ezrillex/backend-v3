@@ -11,7 +11,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { toSeconds, parse } from 'iso8601-duration';
 import { ManagedFilesService } from '../managed-files/managed-files.service';
-import { fileMetaToUrl } from '../utils/utils';
+import { fileMetaToUrl, fileMetaToUrlFallback } from '../utils/utils';
 
 @Injectable()
 export class PostsService {
@@ -156,20 +156,27 @@ export class PostsService {
         createdAt: true,
         channels: {
           select: {
-            avatar: true,
+            avatarFile: true,
             name: true,
             id: true,
           },
         },
       },
     });
-
+    //data.channels as { id: string; name: string; avatar: string }
     const cleanData = {
       type: data.type,
       title: data.title,
       likes: data.likes.toString(),
       createdAt: data.createdAt,
-      channel: data.channels as { id: string; name: string; avatar: string },
+      channel: {
+        id: data.channels.id,
+        name: data.channels.name,
+        avatar: fileMetaToUrlFallback(
+          data.channels.avatarFile,
+          'https://redacted.invalid/img/default_avatar.webp', // todo use .env to configure this
+        ),
+      },
     };
 
     switch (data.type) {

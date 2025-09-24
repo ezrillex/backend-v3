@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { fileMetaToUrlFallback } from '../utils/utils';
 
 @Injectable()
 export class PortalService {
@@ -14,6 +15,21 @@ export class PortalService {
         name: newName,
       },
     });
+  }
+
+  async getAvatar(id: string | null) {
+    if (id) {
+      const data = await this.prisma.managedFile.findUnique({
+        where: { id: id },
+      });
+
+      return fileMetaToUrlFallback(
+        data,
+        'https://redacted.invalid/img/default_avatar.webp',
+      );
+    } else {
+      return 'https://redacted.invalid/img/default_avatar.webp'; // todo use .env for this value
+    }
   }
 
   async getStats(channelId: string) {

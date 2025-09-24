@@ -46,7 +46,6 @@ export class AuthGuard implements CanActivate {
               clerkId: data.sub,
               name:
                 'Canal Nuevo ' + (Math.random() + 1).toString(36).substring(7),
-              // todo default avatar ?
             },
           });
           request['channel'] = {
