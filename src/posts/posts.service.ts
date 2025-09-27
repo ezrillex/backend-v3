@@ -12,6 +12,7 @@ import { firstValueFrom } from 'rxjs';
 import { toSeconds, parse } from 'iso8601-duration';
 import { ManagedFilesService } from '../managed-files/managed-files.service';
 import { fileMetaToUrl, fileMetaToUrlFallback } from '../utils/utils';
+import { CreateTextPost } from './dto/createTextPost';
 
 @Injectable()
 export class PostsService {
@@ -123,6 +124,28 @@ export class PostsService {
         views: 0,
         thumbnailUrl: file.url,
       },
+    }; // return 201 created?
+  }
+
+  async createTextPost(channelId: string, data: CreateTextPost) {
+    // 4. create post on to database.
+    const createResult = await this.prisma.posts.create({
+      include: {
+        text: true,
+      },
+      data: {
+        channelsId: channelId,
+        type: 'Text',
+        text: {
+          create: {
+            text: data.text,
+          },
+        },
+      },
+    });
+    return {
+      ...createResult,
+      likes: 0,
     }; // return 201 created?
   }
 

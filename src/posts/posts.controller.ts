@@ -14,6 +14,7 @@ import { CreateVideoRepost } from './dto/create-video.repost';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
+import { CreateTextPost } from './dto/createTextPost';
 
 @Controller('posts')
 export class PostsController {
@@ -21,11 +22,20 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Post('video/youtube')
-  create(
+  createRepost(
     @Req() request: AuthenticatedAccount,
     @Body() data: CreateVideoRepost,
   ) {
     return this.postsService.createVideoRepost(request.channel.id, data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('text')
+  createTextPost(
+    @Req() request: AuthenticatedAccount,
+    @Body() data: CreateTextPost,
+  ) {
+    return this.postsService.createTextPost(request.channel.id, data);
   }
 
   @Get()

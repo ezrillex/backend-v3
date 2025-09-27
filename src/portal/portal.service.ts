@@ -47,13 +47,27 @@ export class PortalService {
     const storageUsage = storeData.reduce<number>((sum, value) => {
       return sum + value.kilobytes;
     }, 0);
+
     // hosted videos count
     const hostedVideosCount = await this.prisma.posts.count({
       where: {
         channelsId: channelId,
-        type: 'Video',
+        video: {
+          type: 'HostedVideo',
+        },
       },
     });
+
+    // external videos count
+    const youtubeRepostCount = await this.prisma.posts.count({
+      where: {
+        channelsId: channelId,
+        video: {
+          type: 'YoutubeRepost',
+        },
+      },
+    });
+
     // hosted audio posts count, (what could be an external option for this?)
     // images used / total limit
     // external videos count / total limit
@@ -68,10 +82,12 @@ export class PortalService {
       storageUsed: storageUsage,
       storageLimit: 31_457_280,
       hostedVideosCount,
+      youtubeRepostCount,
     };
   }
-  // todo filtering support or reorder
+
   async getPosts(channelId: string, page: number) {
+    // todo filtering support or reorder
     const page_size = 10;
 
     const count = await this.prisma.posts.count({
