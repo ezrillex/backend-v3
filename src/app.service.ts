@@ -21,9 +21,6 @@ export class AppService {
 
   async getHomePage(): Promise<object> {
     const data = await this.prisma.posts.findMany({
-      where: {
-        type: 'Video',
-      },
       select: {
         id: true,
         type: true,
@@ -43,7 +40,11 @@ export class AppService {
           },
         },
         image: true,
-        text: true,
+        text: {
+          select: {
+            text: true,
+          },
+        },
         imageText: true,
         audio: true,
         createdAt: true,
@@ -82,16 +83,19 @@ export class AppService {
             ),
           },
         };
-        switch (post.type) {
-          case 'Video':
-            if (post.video) {
-              // so the complier stops complaining
-              clean['video'] = {
-                duration: post.video.duration,
-                thumbnail: fileMetaToUrl(post.video.thumbnailFile),
-                views: post.video.views.toString(), // cast to string
-              };
-            }
+        if (post.video) {
+          // so the complier stops complaining
+          clean['video'] = {
+            duration: post.video.duration,
+            thumbnail: fileMetaToUrl(post.video.thumbnailFile),
+            views: post.video.views.toString(), // cast to string
+          };
+        }
+
+        if (post.text) {
+          clean['text'] = {
+            text: post.text.text,
+          };
         }
 
         return clean;

@@ -52,7 +52,7 @@ model Posts {
   channels   Channels @relation(fields: [channelsId], references: [id])
   channelsId String   @db.Uuid
 
-  title     String  @default("Titulo Predeterminado") // todo remove this
+  title     String? // nullable due to text posts not required.
   published Boolean @default(false)
   kilobytes Int     @default(0) // some items like text will be set to 0 so this default is ok
 
