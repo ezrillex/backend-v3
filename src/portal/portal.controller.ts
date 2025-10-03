@@ -21,7 +21,6 @@ export class PortalController {
   @UseGuards(AuthGuard)
   @Get('channel')
   async getChannel(@Req() request: AuthenticatedAccount) {
-    console.log(request.channel);
     return {
       name: request.channel.name,
       avatar: await this.portalService.getAvatar(request.channel.avatarFileId),

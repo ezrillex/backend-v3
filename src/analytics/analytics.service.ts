@@ -47,7 +47,6 @@ export class AnalyticsService {
       });
       likes = data.likes;
     } catch (err) {
-      console.log(err);
       return new NotFoundException();
     }
 

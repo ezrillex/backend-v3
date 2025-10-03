@@ -15,6 +15,9 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
 import { CreateTextPost } from './dto/createTextPost';
+import { CreateVideoPost } from './dto/CreateVideoPost';
+import { AdminGuard } from '../auth/admin/admin.guard';
+import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
 
 @Controller('posts')
 export class PostsController {
@@ -27,6 +30,21 @@ export class PostsController {
     @Body() data: CreateVideoRepost,
   ) {
     return this.postsService.createVideoRepost(request.channel.id, data);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('video/hosted')
+  createVideoPost(
+    @Req() request: AuthenticatedAccount,
+    @Body() data: CreateVideoPost,
+  ) {
+    return this.postsService.createVideoPost(request.channel.id, data);
+  }
+
+  @UseGuards(AdminGuard)
+  @Post('video/hosted/submit')
+  uploadTorrentToVideo(@Body() data: SubmitHostedVideoPost) {
+    return this.postsService.submitHostedVideo(data);
   }
 
   @UseGuards(AuthGuard)

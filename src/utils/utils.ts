@@ -6,7 +6,6 @@ export function fileMetaToUrlFallback(
   meta: { prefix: string; id: string } | null,
   fallback: string,
 ) {
-  console.log(meta);
   if (meta) {
     return fileMetaToUrl(meta);
   } else {
