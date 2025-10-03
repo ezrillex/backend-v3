@@ -26,6 +26,10 @@ export class PostsService {
 
   async submitHostedVideo(data: SubmitHostedVideoPost) {
     // todo implement this
+    // convert seconds to duration string
+    // get video by id
+    // upload managed file torrent / get id
+    // update video record with duration, torrent record id.
   }
 
   async validateImage(base64: string) {
