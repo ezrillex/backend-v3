@@ -74,6 +74,7 @@ export class AppService {
           id: post.id,
           type: post.type,
           createdAt: post.createdAt,
+          title: post.title,
           channel: {
             id: post.channels.id,
             name: post.channels.name,

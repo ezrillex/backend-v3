@@ -72,11 +72,11 @@ model VideoPost {
   type        VideoTypes @default(HostedVideo) // todo maybe able to remove on startover
   mediaUrl    String? // only for reposted videos, this is yt link not managed file bucket link
   description String
-  duration    String     @default("12:34") // todo for real one remove defaults.
-
-  views  BigInt @default(0)
-  post   Posts  @relation(fields: [postId], references: [id])
-  postId String @unique @db.Uuid
+  duration    String? // null for upload to platform videos(until manual linking). required for repost yt.
+  // if duration becomes auto then cant be published without it being set
+  views       BigInt     @default(0)
+  post        Posts      @relation(fields: [postId], references: [id])
+  postId      String     @unique @db.Uuid
 
   torrentFile   ManagedFile? @relation("torrents", fields: [torrentFileId], references: [id])
   torrentFileId String?      @db.Uuid

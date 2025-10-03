@@ -13,6 +13,8 @@ import { toSeconds, parse } from 'iso8601-duration';
 import { ManagedFilesService } from '../managed-files/managed-files.service';
 import { fileMetaToUrl, fileMetaToUrlFallback } from '../utils/utils';
 import { CreateTextPost } from './dto/createTextPost';
+import { CreateVideoPost } from './dto/CreateVideoPost';
+import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
 
 @Injectable()
 export class PostsService {
@@ -22,15 +24,18 @@ export class PostsService {
     private readonly files: ManagedFilesService,
   ) {}
 
-  async createVideoRepost(channelId: string, data: CreateVideoRepost) {
+  async submitHostedVideo(data: SubmitHostedVideoPost) {
+    // todo implement this
+  }
+
+  async validateImage(base64: string) {
     // 1. validar la imagen validar dimensiones y compresion.
     let imageBuffer: Buffer;
     let img: sharp.Sharp;
     try {
-      imageBuffer = Buffer.from(data.thumbnail, 'base64');
+      imageBuffer = Buffer.from(base64, 'base64');
       img = sharp(imageBuffer);
       const meta = await img.metadata();
-      console.log(meta);
       if (meta.format !== 'webp') {
         return new BadRequestException('Invalid image format.');
       }
@@ -40,8 +45,17 @@ export class PostsService {
       if (meta.width !== 1280 || meta.height !== 720) {
         return new BadRequestException('Image dimensions must be 1280x720');
       }
+      // console.log(imageBuffer.length); size checked by nestjs rejecting 1mb plus requests.
     } catch (err) {
       return new BadRequestException(err);
+    }
+    return imageBuffer;
+  }
+
+  async createVideoRepost(channelId: string, data: CreateVideoRepost) {
+    const image = await this.validateImage(data.thumbnail);
+    if (image instanceof BadRequestException) {
+      return image;
     }
 
     // 2. validar id de youtube con la api, obtengo duracion. ojo esta call no necesito snippet solo contentDetails.
@@ -72,7 +86,7 @@ export class PostsService {
     // console.log(result.data);
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
-    const file = await this.files.createManagedFile('img', imageBuffer);
+    const file = await this.files.createManagedFile('img', image);
 
     // todo hacer en frontend y preview al usuario.
     // await img
@@ -125,6 +139,44 @@ export class PostsService {
         thumbnailUrl: file.url,
       },
     }; // return 201 created?
+  }
+
+  async createVideoPost(channelId: string, data: CreateVideoPost) {
+    const image = await this.validateImage(data.thumbnail);
+    if (image instanceof BadRequestException) {
+      return image;
+    }
+
+    // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
+    const file = await this.files.createManagedFile('img', image);
+
+    // 4. create post on to database.
+    const createResult = await this.prisma.posts.create({
+      include: {
+        video: true,
+      },
+      data: {
+        channelsId: channelId,
+        title: data.title,
+        type: 'Video',
+        video: {
+          create: {
+            description: data.description,
+            type: 'HostedVideo',
+            thumbnailFileId: file.id,
+          },
+        },
+      },
+    });
+    return {
+      ...createResult,
+      likes: 0,
+      video: {
+        ...createResult.video,
+        views: 0,
+        thumbnailUrl: file.url,
+      },
+    }; // return 201 created? // todo frontend show 'upload code' which is uuid of post. link to gform
   }
 
   async createTextPost(channelId: string, data: CreateTextPost) {
