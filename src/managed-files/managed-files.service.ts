@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { HttpException, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   S3Client,
@@ -28,7 +28,11 @@ export class ManagedFilesService implements OnModuleInit {
   }
 
   // crear archivo / upload api, crear registros db api. RETORNA id y medios urls
-  async createManagedFile(prefix: 'img' | 'wtt', file: Buffer) {
+  async createManagedFile(
+    prefix: 'img' | 'wtt',
+    file: Buffer,
+    cache: boolean = false,
+  ) {
     // get file hash.
     const hash = crypto.createHash('sha256').update(file).digest('hex'); // Hexadecimal
 
@@ -66,19 +70,22 @@ export class ManagedFilesService implements OnModuleInit {
       filename = newRecordId.id + meta.ext;
       id = newRecordId.id;
 
-      const result = await this.s3.send(
-        new PutObjectCommand({
-          Bucket: 'dev-vcris', // todo load from .env
-          Key: `${prefix}/${filename}`,
-          Body: file,
-          ContentType: meta.mime,
-          CacheControl: 'public, max-age=31536000, immutable',
-        }),
-      );
-      // check if upload successfull
+      const command = {
+        Bucket: 'dev-vcris', // todo load from .env
+        Key: `${prefix}/${filename}`,
+        Body: file,
+        ContentType: meta.mime,
+      };
+      if (cache) {
+        command['CacheControl'] = 'public, max-age=31536000, immutable';
+      }
 
-      if (result.$metadata.httpStatusCode !== 200) {
-        // todo error handling. xd
+      const result = await this.s3.send(new PutObjectCommand(command));
+      // check if upload successfull
+      console.log(result);
+
+      if (result.$metadata.httpStatusCode !== 201) {
+        throw new HttpException('Torrent Upload Failed', 500);
       }
     }
 

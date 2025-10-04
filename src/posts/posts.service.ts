@@ -27,9 +27,38 @@ export class PostsService {
   async submitHostedVideo(data: SubmitHostedVideoPost) {
     // todo implement this
     // convert seconds to duration string
+    const duration = this.secondsToDurationString(data.duration);
     // get video by id
+    const record = await this.prisma.videoPost.findUniqueOrThrow({
+      where: {
+        id: data.id,
+      },
+    });
+    console.log(record);
     // upload managed file torrent / get id
+    const torrentFileBuffer = Buffer.from(data.torrent, 'base64');
+    const torrentFileRecord = await this.files.createManagedFile(
+      'wtt',
+      torrentFileBuffer,
+      false,
+    );
+    console.log(torrentFileRecord.url);
+
     // update video record with duration, torrent record id.
+    const outcome = await this.prisma.videoPost.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        duration: duration,
+        torrentFileId: torrentFileRecord.id,
+      },
+    });
+    console.log(outcome);
+    return {
+      ...outcome,
+      views: outcome.views.toString(),
+    };
   }
 
   async validateImage(base64: string) {
@@ -90,7 +119,7 @@ export class PostsService {
     // console.log(result.data);
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
-    const file = await this.files.createManagedFile('img', image);
+    const file = await this.files.createManagedFile('img', image, true);
 
     // todo hacer en frontend y preview al usuario.
     // await img
@@ -152,7 +181,7 @@ export class PostsService {
     }
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
-    const file = await this.files.createManagedFile('img', image);
+    const file = await this.files.createManagedFile('img', image, true);
 
     // 4. create post on to database.
     const createResult = await this.prisma.posts.create({
@@ -205,21 +234,25 @@ export class PostsService {
     }; // return 201 created?
   }
 
-  formatYouTubeDuration(duration) {
-    const parsed = parse(duration);
-    const totalSeconds = toSeconds(parsed);
-
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+  secondsToDurationString(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondsRemainder = seconds % 60;
 
     const pad = (n: number): string => n.toString().padStart(2, '0');
 
     if (hours > 0) {
-      return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+      return `${hours}:${pad(minutes)}:${pad(secondsRemainder)}`;
     } else {
-      return `${minutes}:${pad(seconds)}`;
+      return `${minutes}:${pad(secondsRemainder)}`;
     }
+  }
+
+  formatYouTubeDuration(duration) {
+    const parsed = parse(duration);
+    const totalSeconds = toSeconds(parsed);
+
+    return this.secondsToDurationString(totalSeconds);
   }
 
   findAll() {
