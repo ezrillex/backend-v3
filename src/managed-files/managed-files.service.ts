@@ -85,6 +85,14 @@ export class ManagedFilesService implements OnModuleInit {
       console.log(result);
 
       if (result.$metadata.httpStatusCode !== 201) {
+        // rollback creation of record (otherwise next attempt will go to dupe branch.
+        const deleteResult = await this.prisma.managedFile.delete({
+          where: {
+            id: newRecordId.id,
+          },
+        });
+        console.log('upload failed deleted record:');
+        console.log(deleteResult);
         throw new HttpException('Torrent Upload Failed', 500);
       }
     }
