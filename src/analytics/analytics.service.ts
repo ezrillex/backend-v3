@@ -5,10 +5,10 @@ import { PrismaService } from '../prisma/prisma.service';
 export class AnalyticsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async viewVideoPost(id: string) {
+  async analyticsTrackViewPost(id: string) {
     let views = 0n;
     try {
-      const data = await this.prisma.videoPost.findFirstOrThrow({
+      const data = await this.prisma.posts.findFirstOrThrow({
         where: {
           id: id,
         },
@@ -24,7 +24,7 @@ export class AnalyticsService {
 
     views += 1n;
 
-    await this.prisma.videoPost.update({
+    await this.prisma.posts.update({
       where: {
         id: id,
       },

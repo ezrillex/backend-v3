@@ -15,6 +15,8 @@ import { fileMetaToUrl, fileMetaToUrlFallback } from '../utils/utils';
 import { CreateTextPost } from './dto/createTextPost';
 import { CreateVideoPost } from './dto/CreateVideoPost';
 import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
+import { GetAllVideosFilterSort } from './dto/GetAllVideosFilterSort';
+import { SortBy } from './entities/sortBy.enum';
 
 @Injectable()
 export class PostsService {
@@ -25,7 +27,6 @@ export class PostsService {
   ) {}
 
   async submitHostedVideo(data: SubmitHostedVideoPost) {
-    // todo implement this
     // convert seconds to duration string
     const duration = this.secondsToDurationString(data.duration);
     // get video by id
@@ -53,11 +54,33 @@ export class PostsService {
         duration: duration,
         torrentFileId: torrentFileRecord.id,
       },
+      include: {
+        post: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
+
+    const postUpdateOutcome = await this.prisma.posts.update({
+      where: {
+        id: outcome.post.id,
+      },
+      data: {
+        kilobytes: data.size,
+      },
+    });
+
     console.log(outcome);
+    console.log(postUpdateOutcome);
     return {
       ...outcome,
-      views: outcome.views.toString(),
+      post: {
+        ...postUpdateOutcome,
+        views: postUpdateOutcome.views.toString(),
+        likes: postUpdateOutcome.likes.toString(),
+      },
     };
   }
 
@@ -255,14 +278,80 @@ export class PostsService {
     return this.secondsToDurationString(totalSeconds);
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll(params: GetAllVideosFilterSort) {
+    const filterQuery = {};
+    if (params.type.length > 0) {
+      filterQuery['type'] = {
+        in: params.type,
+      };
+    }
+
+    const orderQuery = {};
+    switch (params.sortBy) {
+      case SortBy.PublishedDate:
+        orderQuery['publishedAt'] = params.sortOrder;
+        break;
+      case SortBy.Views:
+        orderQuery['views'] = params.sortOrder;
+        break;
+      case SortBy.Likes:
+        orderQuery['likes'] = params.sortOrder;
+        break;
+      default:
+        break;
+    }
+    // todo determine if custom page size?
+    const data = await this.prisma.posts.findMany({
+      include: {
+        video: true,
+        image: true,
+        text: true,
+        imageText: true,
+        audio: true,
+      },
+      where: filterQuery,
+      orderBy: orderQuery,
+      take: 30,
+      skip: params.page * 30,
+    });
+
+    return data.map((post) => {
+      const clean = {
+        id: post.id,
+        type: post.type,
+        title: post.title,
+        views: post.views.toString(),
+        likes: post.likes.toString(),
+        publishedAt: post.publishedAt,
+      };
+
+      if (post.video) {
+        clean['video'] = post.video;
+      } else if (post.image) {
+        clean['image'] = post.image;
+      } else if (post.text) {
+        clean['text'] = post.text;
+      } else if (post.imageText) {
+        clean['imageText'] = post.imageText;
+      } else if (post.audio) {
+        clean['audio'] = post.audio;
+      }
+
+      // items that do come but not included todo select only needed fileds.
+      //"channelsId": "0199377c-ae49-7fb0-b72e-0c6d7d45ab29",
+      //"published": false, // todo filter by this,
+      //"kilobytes": 0,
+      //"createdAt": "2025-09-27T01:32:40.745Z",
+
+      return clean;
+    });
   }
 
   async findOne(id: string) {
     const data = await this.prisma.posts.findFirstOrThrow({
       select: {
         type: true,
+        views: true,
         likes: true,
         title: true,
         createdAt: true,
@@ -280,6 +369,7 @@ export class PostsService {
       type: data.type,
       title: data.title,
       likes: data.likes.toString(),
+      views: data.views.toString(),
       createdAt: data.createdAt,
       channel: {
         id: data.channels.id,
@@ -301,7 +391,6 @@ export class PostsService {
             mediaUrl: true,
             description: true,
             duration: true,
-            views: true,
             type: true,
             thumbnailFile: {
               select: {
@@ -316,7 +405,6 @@ export class PostsService {
           description: video.description,
           duration: video.duration,
           thumbnail: fileMetaToUrl(video.thumbnailFile), // todo pass thumbnail with new format
-          views: video.views.toString(),
           type: video.type,
         };
       }

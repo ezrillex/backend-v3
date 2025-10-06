@@ -19,6 +19,11 @@ export class SubmitHostedVideoPost {
   @Min(1)
   duration: number;
 
+  @IsNumber()
+  @IsInt()
+  @Min(1)
+  size: number;
+
   @IsString()
   @IsNotEmpty()
   @IsBase64()

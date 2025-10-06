@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -56,7 +55,9 @@ model Posts {
   published Boolean @default(false)
   kilobytes Int     @default(0) // some items like text will be set to 0 so this default is ok
 
-  likes       BigInt   @default(0)
+  likes BigInt @default(0)
+  views BigInt @default(0)
+
   createdAt   DateTime @default(now())
   publishedAt DateTime @default(now())
 
@@ -74,7 +75,6 @@ model VideoPost {
   description String
   duration    String? // null for upload to platform videos(until manual linking). required for repost yt.
   // if duration becomes auto then cant be published without it being set
-  views       BigInt     @default(0)
   post        Posts      @relation(fields: [postId], references: [id])
   postId      String     @unique @db.Uuid
 

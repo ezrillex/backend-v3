@@ -25,6 +25,7 @@ export class AppService {
         id: true,
         type: true,
         title: true,
+        views: true,
         channels: {
           select: {
             id: true,
@@ -36,7 +37,6 @@ export class AppService {
           select: {
             duration: true,
             thumbnailFile: true,
-            views: true,
           },
         },
         image: true,
@@ -73,6 +73,7 @@ export class AppService {
         const clean = {
           id: post.id,
           type: post.type,
+          views: post.views.toString(), // cast to string
           createdAt: post.createdAt,
           title: post.title,
           channel: {
@@ -89,7 +90,6 @@ export class AppService {
           clean['video'] = {
             duration: post.video.duration,
             thumbnail: fileMetaToUrl(post.video.thumbnailFile),
-            views: post.video.views.toString(), // cast to string
           };
         }
 
