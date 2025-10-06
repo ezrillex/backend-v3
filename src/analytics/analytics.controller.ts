@@ -13,6 +13,6 @@ export class AnalyticsController {
 
   @Post('view_video_post/:id')
   viewVideoPost(@Param('id') id: string) {
-    return this.analyticsService.viewVideoPost(id);
+    return this.analyticsService.analyticsTrackViewPost(id);
   }
 }

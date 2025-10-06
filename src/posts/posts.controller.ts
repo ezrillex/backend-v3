@@ -1,13 +1,14 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreateVideoRepost } from './dto/create-video.repost';
@@ -18,6 +19,9 @@ import { CreateTextPost } from './dto/createTextPost';
 import { CreateVideoPost } from './dto/CreateVideoPost';
 import { AdminGuard } from '../auth/admin/admin.guard';
 import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
+import { GetAllVideosFilterSort } from './dto/GetAllVideosFilterSort';
+import { SortBy } from './entities/sortBy.enum';
+import { SortOrder } from './entities/sortOrder.enum';
 
 @Controller('posts')
 export class PostsController {
@@ -57,8 +61,16 @@ export class PostsController {
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query() params: GetAllVideosFilterSort) {
+    // set defaults for missing params
+    params.page = params.page ?? 0;
+    params.type = params.type ?? [];
+    if (!Array.isArray(params.type)) {
+      params.type = [params.type];
+    }
+    params.sortBy = params.sortBy ?? SortBy.PublishedDate;
+    params.sortOrder = params.sortOrder ?? SortOrder.DESC;
+    return this.postsService.findAll(params);
   }
 
   @Get(':id')
