@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { fileMetaToUrlFallback } from '../utils/utils';
 
 @Injectable()
 export class ChannelsService {
@@ -9,28 +10,16 @@ export class ChannelsService {
     // todo include channel avatar url. and stats of channel?
     const data = await this.prisma.channels.findUniqueOrThrow({
       where: { id },
-      include: {
-        posts: {
-          include: {
-            video: true,
-            image: true,
-            text: true,
-            imageText: true,
-            audio: true,
-          },
-        },
-      },
+      include: { avatarFile: true },
     });
-
+    console.log(data);
     return {
-      ...data,
-      posts: data.posts.map((post) => {
-        return {
-          ...post,
-          views: post.views.toString(),
-          likes: post.likes.toString(),
-        };
-      }),
+      id: data.id,
+      name: data.name,
+      avatar: fileMetaToUrlFallback(
+        data.avatarFile,
+        'https://redacted.invalid/img/default_avatar.webp', // todo use .env for this value
+      ),
     };
   }
 }
