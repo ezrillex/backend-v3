@@ -7,6 +7,7 @@ import { PortalModule } from './portal/portal.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma/prisma.module';
 import { ManagedFilesModule } from './managed-files/managed-files.module';
+import { ChannelsModule } from './channels/channels.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ManagedFilesModule } from './managed-files/managed-files.module';
     ScheduleModule.forRoot(),
     PrismaModule,
     ManagedFilesModule,
+    ChannelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
