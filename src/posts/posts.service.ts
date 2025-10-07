@@ -286,6 +286,10 @@ export class PostsService {
       };
     }
 
+    if (params.channel) {
+      filterQuery['channelsId'] = params.channel;
+    }
+
     const orderQuery = {};
     switch (params.sortBy) {
       case SortBy.PublishedDate:
@@ -308,6 +312,13 @@ export class PostsService {
         text: true,
         imageText: true,
         audio: true,
+        channels: {
+          select: {
+            id: true,
+            name: true,
+            avatarFile: true,
+          },
+        },
       },
       where: filterQuery,
       orderBy: orderQuery,
@@ -323,6 +334,14 @@ export class PostsService {
         views: post.views.toString(),
         likes: post.likes.toString(),
         publishedAt: post.publishedAt,
+        channel: {
+          id: post.channels.id,
+          name: post.channels.name,
+          avatar: fileMetaToUrlFallback(
+            post.channels.avatarFile,
+            'https://redacted.invalid/img/default_avatar.webp',
+          ),
+        },
       };
 
       if (post.video) {
