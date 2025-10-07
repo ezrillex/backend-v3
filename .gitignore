@@ -3,4 +3,4 @@
 /generated/prisma
 .env
 /.idea
-
+/coverage
