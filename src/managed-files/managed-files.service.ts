@@ -83,8 +83,7 @@ export class ManagedFilesService implements OnModuleInit {
       const result = await this.s3.send(new PutObjectCommand(command));
       // check if upload successfull
       console.log(result);
-
-      if (result.$metadata.httpStatusCode !== 201) {
+      if (![200, 201].includes(result.$metadata.httpStatusCode ?? 0)) {
         // rollback creation of record (otherwise next attempt will go to dupe branch.
         const deleteResult = await this.prisma.managedFile.delete({
           where: {

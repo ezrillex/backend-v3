@@ -17,6 +17,7 @@ import { CreateVideoPost } from './dto/CreateVideoPost';
 import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
 import { GetAllVideosFilterSort } from './dto/GetAllVideosFilterSort';
 import { SortBy } from './entities/sortBy.enum';
+import { PostTypes, VideoTypes } from '@prisma/client';
 
 @Injectable()
 export class PostsService {
@@ -30,12 +31,32 @@ export class PostsService {
     // convert seconds to duration string
     const duration = this.secondsToDurationString(data.duration);
     // get video by id
-    const record = await this.prisma.videoPost.findUniqueOrThrow({
+    const post = await this.prisma.posts.findUniqueOrThrow({
       where: {
         id: data.id,
       },
+      select: {
+        id: true,
+        type: true,
+        video: {
+          select: {
+            id: true,
+            type: true,
+          },
+        },
+      },
     });
-    console.log(record);
+
+    if (post.type !== PostTypes.Video) {
+      throw new BadRequestException('post type is not video');
+    }
+    if (!post.video) {
+      throw new InternalServerErrorException('Post video record is null');
+    }
+    if (post.video.type !== VideoTypes.HostedVideo) {
+      throw new BadRequestException('video type is not hosted video');
+    }
+
     // upload managed file torrent / get id
     const torrentFileBuffer = Buffer.from(data.torrent, 'base64');
     const torrentFileRecord = await this.files.createManagedFile(
@@ -46,41 +67,33 @@ export class PostsService {
     console.log(torrentFileRecord.url);
 
     // update video record with duration, torrent record id.
-    const outcome = await this.prisma.videoPost.update({
+    const videoOutcome = await this.prisma.videoPost.update({
       where: {
-        id: data.id,
+        id: post.video.id,
       },
       data: {
         duration: duration,
         torrentFileId: torrentFileRecord.id,
       },
-      include: {
-        post: {
-          select: {
-            id: true,
-          },
-        },
-      },
     });
 
-    const postUpdateOutcome = await this.prisma.posts.update({
+    const postOutcome = await this.prisma.posts.update({
       where: {
-        id: outcome.post.id,
+        id: post.id,
       },
       data: {
         kilobytes: data.size,
       },
     });
 
-    console.log(outcome);
-    console.log(postUpdateOutcome);
+    console.log(videoOutcome);
+    console.log(postOutcome);
     return {
-      ...outcome,
-      post: {
-        ...postUpdateOutcome,
-        views: postUpdateOutcome.views.toString(),
-        likes: postUpdateOutcome.likes.toString(),
-      },
+      ...postOutcome,
+      views: postOutcome.views.toString(),
+      likes: postOutcome.likes.toString(),
+
+      video: videoOutcome,
     };
   }
 
@@ -401,32 +414,76 @@ export class PostsService {
     };
 
     switch (data.type) {
-      case 'Video': {
-        const video = await this.prisma.videoPost.findFirstOrThrow({
-          where: {
-            postId: id,
-          },
-          select: {
-            mediaUrl: true,
-            description: true,
-            duration: true,
-            type: true,
-            thumbnailFile: {
-              select: {
-                prefix: true,
-                id: true,
+      case PostTypes.Video:
+        {
+          const video = await this.prisma.videoPost.findFirstOrThrow({
+            where: {
+              postId: id,
+            },
+            select: {
+              mediaUrl: true,
+              description: true,
+              duration: true,
+              type: true,
+              thumbnailFile: {
+                select: {
+                  prefix: true,
+                  id: true,
+                },
+              },
+              torrentFile: {
+                select: {
+                  prefix: true,
+                  id: true,
+                },
+              },
+              webseeds: {
+                where: {
+                  provider: {
+                    enabled: true,
+                  },
+                },
+                select: {
+                  slug: true,
+                  provider: {
+                    select: {
+                      basePath: true,
+                    },
+                  },
+                },
               },
             },
-          },
-        });
-        cleanData['video'] = {
-          mediaUrl: video.mediaUrl,
-          description: video.description,
-          duration: video.duration,
-          thumbnail: fileMetaToUrl(video.thumbnailFile), // todo pass thumbnail with new format
-          type: video.type,
-        };
-      }
+          });
+
+          switch (video.type) {
+            case VideoTypes.YoutubeRepost:
+              cleanData['video'] = {
+                mediaUrl: video.mediaUrl,
+                description: video.description,
+                duration: video.duration,
+                thumbnail: fileMetaToUrl(video.thumbnailFile), // todo pass thumbnail with new format
+                type: video.type,
+              };
+              break;
+            case VideoTypes.HostedVideo:
+              if (!video.torrentFile) {
+                throw new InternalServerErrorException(
+                  'Requested hosted video does not have a .torrent file linked',
+                );
+              }
+              cleanData['video'] = {
+                description: video.description,
+                duration: video.duration,
+                thumbnail: fileMetaToUrl(video.thumbnailFile), // todo pass thumbnail with new format
+                type: video.type,
+                torrent: fileMetaToUrl(video.torrentFile),
+                webseeds: video.webseeds.map((seed) => {
+                  return seed.provider.basePath + seed.slug;
+                }),
+              };
+          }
+        }
+        break;
     }
 
     return cleanData;
