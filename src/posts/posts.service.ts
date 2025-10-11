@@ -3,8 +3,8 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { CreateVideoRepost } from './dto/create-video.repost';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreateVideoRepost } from './dto/CreateVideoRepost';
+import { UpdatePostDto } from './dto/UpdatePostDto';
 import { PrismaService } from '../prisma/prisma.service';
 import sharp from 'sharp';
 import { HttpService } from '@nestjs/axios';
@@ -489,8 +489,24 @@ export class PostsService {
     return cleanData;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: string, updateData: UpdatePostDto) {
+    // check post exists
+    const record = await this.prisma.posts.findUniqueOrThrow({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        published: true,
+      },
+    });
+
+    //figure out fields to update on post element
+    if (updateData.title) {
+    }
+    // if published false to true, runs checks if item is in publishable state and updates publish date.
+    if (updateData.isPublished) {
+    }
   }
 
   remove(id: number) {

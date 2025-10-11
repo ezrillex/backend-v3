@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -11,8 +12,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreateVideoRepost } from './dto/create-video.repost';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreateVideoRepost } from './dto/CreateVideoRepost';
+import { UpdatePostDto } from './dto/UpdatePostDto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
 import { CreateTextPost } from './dto/createTextPost';
@@ -45,6 +46,7 @@ export class PostsController {
     return this.postsService.createVideoPost(request.channel.id, data);
   }
 
+  // for submitting torrent to a hosted video
   @UseGuards(AdminGuard)
   @Post('video/hosted/submit')
   uploadTorrentToVideo(@Body() data: SubmitHostedVideoPost) {
@@ -74,17 +76,20 @@ export class PostsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
     return this.postsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '7' })) id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return this.postsService.update(id, updatePostDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
     return this.postsService.remove(+id);
   }
 }
