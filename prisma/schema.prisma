@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -61,16 +55,16 @@ model Posts {
   createdAt   DateTime @default(now())
   publishedAt DateTime @default(now())
 
-  video     VideoPost?
+  video     VideoPost? // implemented yes
   image     ImagePost?
-  text      TextPost?
+  text      TextPost? // implemented yes
   imageText ImageTextPost?
   audio     AudioPost?
 }
 
 model VideoPost {
   id          String     @id @default(uuid(7)) @db.Uuid
-  type        VideoTypes @default(HostedVideo) // todo maybe able to remove on startover
+  type        VideoTypes
   mediaUrl    String? // only for reposted videos, this is yt link not managed file bucket link
   description String
   duration    String? // null for hosted(until submission). required for repost yt. (got from api)
@@ -87,6 +81,13 @@ model VideoPost {
   thumbnailFileId String      @db.Uuid
 }
 
+model TextPost {
+  id     String @id @default(uuid(7)) @db.Uuid
+  text   String
+  post   Posts  @relation(fields: [postId], references: [id])
+  postId String @unique @db.Uuid
+}
+
 model ManagedFile {
   id     String   @id @default(uuid(7)) @db.Uuid
   prefix Prefixes
@@ -101,14 +102,6 @@ model ManagedFile {
 model ImagePost {
   id     String @id @default(uuid(7)) @db.Uuid
   url    String
-  post   Posts  @relation(fields: [postId], references: [id])
-  postId String @unique @db.Uuid
-}
-
-//tbd
-model TextPost {
-  id     String @id @default(uuid(7)) @db.Uuid
-  text   String
   post   Posts  @relation(fields: [postId], references: [id])
   postId String @unique @db.Uuid
 }
