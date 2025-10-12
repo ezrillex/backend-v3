@@ -499,6 +499,11 @@ export class PostsService {
         id: true,
         published: true,
         type: true,
+        video: {
+          select: {
+            id: true,
+          },
+        },
         text: {
           select: {
             id: true,
@@ -560,6 +565,14 @@ export class PostsService {
           'Post of type text does not have a related text record.',
         );
       }
+      relatedRecordUpdateOutcome['video'] = await this.prisma.videoPost.update({
+        where: {
+          id: originalData.video.id,
+        },
+        data: {
+          description: updateData.video.description,
+        },
+      });
     }
   }
 
