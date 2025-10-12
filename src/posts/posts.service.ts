@@ -491,21 +491,75 @@ export class PostsService {
 
   async update(id: string, updateData: UpdatePostDto) {
     // check post exists
-    const record = await this.prisma.posts.findUniqueOrThrow({
+    const originalData = await this.prisma.posts.findUniqueOrThrow({
       where: {
         id: id,
       },
       select: {
         id: true,
         published: true,
+        type: true,
+        text: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
+    const updatePostData = {};
     //figure out fields to update on post element
     if (updateData.title) {
+      updatePostData['title'] = updateData.title;
     }
-    // if published false to true, runs checks if item is in publishable state and updates publish date.
-    if (updateData.isPublished) {
+
+    // NOTE: we don't want to do nothing when undefined because is optional! so keep this weird comparison.
+    if (updateData.isPublished === false) {
+    } else if (updateData.isPublished === true) {
+      // if published false to true, runs checks if item is in publishable state and updates publish date.
+      if (originalData.published !== updateData.isPublished) {
+      } else {
+        updatePostData['published'] = true; // skip checks if no change
+      }
+    }
+
+    const updateResult = await this.prisma.posts.update({
+      data: updatePostData,
+      where: {
+        id: id,
+      },
+    });
+
+    const relatedRecordUpdateOutcome = {};
+
+    if (
+      originalData.type === PostTypes.Text &&
+      updateData.text &&
+      updateData.text.text
+    ) {
+      if (!originalData.text) {
+        throw new InternalServerErrorException(
+          'Post of type text does not have a related text record.',
+        );
+      }
+      relatedRecordUpdateOutcome['text'] = await this.prisma.textPost.update({
+        where: {
+          id: originalData.text.id,
+        },
+        data: { text: updateData.text.text },
+      });
+    }
+
+    if (
+      originalData.type === PostTypes.Video &&
+      updateData.video &&
+      updateData.video.description
+    ) {
+      if (!originalData.video) {
+        throw new InternalServerErrorException(
+          'Post of type text does not have a related text record.',
+        );
+      }
     }
   }
 
