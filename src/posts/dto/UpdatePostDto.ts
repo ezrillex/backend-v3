@@ -28,7 +28,7 @@ export class UpdatePostDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateTextPost)
-  text: CreateTextPost;
+  text: CreateTextPost; // todo temporary, change if this dto changes
 }
 
 export class UpdateVideoDto {
