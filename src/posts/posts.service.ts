@@ -499,6 +499,7 @@ export class PostsService {
         id: true,
         published: true,
         type: true,
+        channelsId: true,
         video: {
           select: {
             id: true,
@@ -511,6 +512,8 @@ export class PostsService {
         },
       },
     });
+
+    // todo check if logged in user is editing a post of HIS OWN channel.
 
     const updatePostData = {};
     //figure out fields to update on post element
@@ -574,6 +577,13 @@ export class PostsService {
         },
       });
     }
+
+    return {
+      ...updateResult,
+      likes: updateResult.likes.toString(),
+      views: updateResult.views.toString(),
+      ...relatedRecordUpdateOutcome,
+    };
   }
 
   remove(id: number) {
