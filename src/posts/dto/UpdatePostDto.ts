@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateTextPost } from './createTextPost';
+import { UpdateVideoDto } from './UpdateVideoDto';
 
 export class UpdatePostDto {
   @IsOptional()
@@ -30,15 +31,3 @@ export class UpdatePostDto {
   @Type(() => CreateTextPost)
   text: CreateTextPost; // todo temporary, change if this dto changes
 }
-
-export class UpdateVideoDto {
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @Length(0, 5000) // this is yt limit :v
-  description: string;
-
-  //todo allow updating the thumbnail
-}
-
-// export class UpdateTextDto {}
