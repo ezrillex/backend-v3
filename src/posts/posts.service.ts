@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -489,7 +490,11 @@ export class PostsService {
     return cleanData;
   }
 
-  async update(id: string, updateData: UpdatePostDto) {
+  async update(
+    id: string,
+    requestDataToChange: UpdatePostDto,
+    requestUserId: string,
+  ) {
     // check post exists
     const originalData = await this.prisma.posts.findUniqueOrThrow({
       where: {
@@ -503,6 +508,9 @@ export class PostsService {
         video: {
           select: {
             id: true,
+            duration: true,
+            type: true,
+            torrentFileId: true,
           },
         },
         text: {
@@ -514,25 +522,56 @@ export class PostsService {
     });
 
     // todo check if logged in user is editing a post of HIS OWN channel.
-
-    const updatePostData = {};
-    //figure out fields to update on post element
-    if (updateData.title) {
-      updatePostData['title'] = updateData.title;
+    if (requestUserId !== originalData.channelsId) {
+      throw new ForbiddenException(
+        'Post does not belong to the user making the request',
+      );
     }
 
-    // NOTE: we don't want to do nothing when undefined because is optional! so keep this weird comparison.
-    if (updateData.isPublished === false) {
-    } else if (updateData.isPublished === true) {
-      // if published false to true, runs checks if item is in publishable state and updates publish date.
-      if (originalData.published !== updateData.isPublished) {
-      } else {
-        updatePostData['published'] = true; // skip checks if no change
+    const newData = {};
+    //figure out fields to update on post element
+    if (requestDataToChange.title) {
+      newData['title'] = requestDataToChange.title;
+    }
+
+    // if published false to true, runs checks if item is in publishable state and updates publish date.
+    if (
+      originalData.published !== requestDataToChange.isPublished &&
+      requestDataToChange.isPublished
+    ) {
+      // has changed and is true? run publishable state checks, update published date.
+      switch (
+        originalData.type // for hosted videos check if torrent file and duration is present.
+      ) {
+        case PostTypes.Video:
+          if (!originalData.video?.duration) {
+            throw new InternalServerErrorException(
+              'Post is not in publishable state: missing duration.',
+            );
+          }
+
+          if (
+            originalData.video?.type === VideoTypes.HostedVideo &&
+            !originalData.video?.torrentFileId
+          ) {
+            throw new InternalServerErrorException(
+              'Post is not in publishable state: hosted video file is not yet uploaded.',
+            );
+          }
+          break;
       }
+      // if no errors were triggered then continue with update.
+      newData['published'] = true;
+    } else if (
+      originalData.published !== requestDataToChange.isPublished &&
+      requestDataToChange.isPublished === false // do not catch undefined so explicit false comparison.
+    ) {
+      // has changed and is false?
+      newData['published'] = false; // skip publishable checks and sets to not pub.
     }
 
     const updateResult = await this.prisma.posts.update({
-      data: updatePostData,
+      data: newData,
       where: {
         id: id,
       },
@@ -542,8 +581,8 @@ export class PostsService {
 
     if (
       originalData.type === PostTypes.Text &&
-      updateData.text &&
-      updateData.text.text
+      requestDataToChange.text &&
+      requestDataToChange.text.text
     ) {
       if (!originalData.text) {
         throw new InternalServerErrorException(
@@ -554,14 +593,14 @@ export class PostsService {
         where: {
           id: originalData.text.id,
         },
-        data: { text: updateData.text.text },
+        data: { text: requestDataToChange.text.text },
       });
     }
 
     if (
       originalData.type === PostTypes.Video &&
-      updateData.video &&
-      updateData.video.description
+      requestDataToChange.video &&
+      requestDataToChange.video.description
     ) {
       if (!originalData.video) {
         throw new InternalServerErrorException(
@@ -573,7 +612,7 @@ export class PostsService {
           id: originalData.video.id,
         },
         data: {
-          description: updateData.video.description,
+          description: requestDataToChange.video.description,
         },
       });
     }

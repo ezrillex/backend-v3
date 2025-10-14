@@ -80,12 +80,14 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
+    @Req() request: AuthenticatedAccount,
     @Param('id', new ParseUUIDPipe({ version: '7' })) id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.postsService.update(id, updatePostDto);
+    return this.postsService.update(id, updatePostDto, request.channel.id);
   }
 
   @Delete(':id')
