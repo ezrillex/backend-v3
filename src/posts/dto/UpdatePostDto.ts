@@ -15,19 +15,19 @@ export class UpdatePostDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 150) // 100 is yt limit, await feedback on this?
-  title: string;
+  title?: string;
 
   @IsOptional()
   @IsBoolean()
-  isPublished: boolean;
+  isPublished?: boolean;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => UpdateVideoDto)
-  video: UpdateVideoDto;
+  video?: UpdateVideoDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateTextPost)
-  text: CreateTextPost; // todo temporary, change if this dto changes
+  text?: CreateTextPost; // todo temporary, change if this dto changes, todo DO ONE THAT HAS '?'
 }
