@@ -32,6 +32,7 @@ export class AuthGuard implements CanActivate {
         // const user = await clerkClient.users.getUser(data.sub);
         // console.log(user);
 
+        // todo why not find unique? why not throw if not ?
         const channel = await this.prisma.channels.findFirst({
           where: {
             clerkId: data.sub,
