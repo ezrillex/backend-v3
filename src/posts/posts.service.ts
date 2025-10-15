@@ -99,34 +99,31 @@ export class PostsService {
   }
 
   async validateImage(base64: string) {
-    // 1. validar la imagen validar dimensiones y compresion.
+    let meta: sharp.Metadata;
     let imageBuffer: Buffer;
-    let img: sharp.Sharp;
+
     try {
       imageBuffer = Buffer.from(base64, 'base64');
-      img = sharp(imageBuffer);
-      const meta = await img.metadata();
-      if (meta.format !== 'webp') {
-        return new BadRequestException('Invalid image format.');
-      }
-      if (meta.hasAlpha) {
-        return new BadRequestException('Transparency not allowed');
-      }
-      if (meta.width !== 1280 || meta.height !== 720) {
-        return new BadRequestException('Image dimensions must be 1280x720');
-      }
-      // console.log(imageBuffer.length); size checked by nestjs rejecting 1mb plus requests.
-    } catch (err) {
-      return new BadRequestException(err);
+      meta = await sharp(imageBuffer).metadata();
+    } catch {
+      throw new BadRequestException('Invalid image data');
     }
+
+    if (meta.format !== 'webp') {
+      throw new BadRequestException('Invalid image format.');
+    }
+    if (meta.hasAlpha) {
+      throw new BadRequestException('Transparency not allowed');
+    }
+    if (meta.width !== 1280 || meta.height !== 720) {
+      throw new BadRequestException('Image dimensions must be 1280x720');
+    }
+
     return imageBuffer;
   }
 
   async createVideoRepost(channelId: string, data: CreateVideoRepost) {
     const image = await this.validateImage(data.thumbnail);
-    if (image instanceof BadRequestException) {
-      return image;
-    }
 
     // 2. validar id de youtube con la api, obtengo duracion. ojo esta call no necesito snippet solo contentDetails.
     // todo cache calls to this api. for now volume is low for 10k daily limit.
@@ -213,9 +210,6 @@ export class PostsService {
 
   async createVideoPost(channelId: string, data: CreateVideoPost) {
     const image = await this.validateImage(data.thumbnail);
-    if (image instanceof BadRequestException) {
-      return image;
-    }
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
     const file = await this.files.createManagedFile('img', image, true);
