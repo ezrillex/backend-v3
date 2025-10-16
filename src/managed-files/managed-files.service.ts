@@ -106,9 +106,6 @@ export class ManagedFilesService implements OnModuleInit {
   // GET un archivo / retorna datos necesarios para utilizar el archivo.
   getManagedFile(id: string) {}
 
-  // borrar archivo / elimina referencia a este archivo de la fuente que decia.
-  removeManagedFileReference() {}
-
   // sync / sincroniza archivos / borra los sin referencias / manda warnings de missing files.
   syncManagedFiles() {}
 }
