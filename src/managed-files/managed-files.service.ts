@@ -17,6 +17,7 @@ export class ManagedFilesService implements OnModuleInit {
   constructor(private readonly prisma: PrismaService) {}
 
   onModuleInit() {
+    console.log('init managed files'); // todo like prisma make it global? now is making 2 instances
     this.s3 = new S3Client({
       region: 'auto',
       endpoint: `https://REDACTED_ACCOUNT_ID.r2.cloudflarestorage.com/`,
