@@ -7,7 +7,6 @@ import {
 import { CreateVideoRepost } from './dto/CreateVideoRepost';
 import { UpdatePostDto } from './dto/UpdatePostDto';
 import { PrismaService } from '../prisma/prisma.service';
-import sharp from 'sharp';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { toSeconds, parse } from 'iso8601-duration';
@@ -19,6 +18,7 @@ import { SubmitHostedVideoPost } from './dto/SubmitHostedVideoPost';
 import { GetAllVideosFilterSort } from './dto/GetAllVideosFilterSort';
 import { SortBy } from './entities/sortBy.enum';
 import { PostTypes, VideoTypes } from '@prisma/client';
+import { validateImage } from '../utils/utils';
 
 @Injectable()
 export class PostsService {
@@ -98,32 +98,8 @@ export class PostsService {
     };
   }
 
-  async validateImage(base64: string) {
-    let meta: sharp.Metadata;
-    let imageBuffer: Buffer;
-
-    try {
-      imageBuffer = Buffer.from(base64, 'base64');
-      meta = await sharp(imageBuffer).metadata();
-    } catch {
-      throw new BadRequestException('Invalid image data');
-    }
-
-    if (meta.format !== 'webp') {
-      throw new BadRequestException('Invalid image format.');
-    }
-    if (meta.hasAlpha) {
-      throw new BadRequestException('Transparency not allowed');
-    }
-    if (meta.width !== 1280 || meta.height !== 720) {
-      throw new BadRequestException('Image dimensions must be 1280x720');
-    }
-
-    return imageBuffer;
-  }
-
   async createVideoRepost(channelId: string, data: CreateVideoRepost) {
-    const image = await this.validateImage(data.thumbnail);
+    const image = await validateImage(data.thumbnail);
 
     // 2. validar id de youtube con la api, obtengo duracion. ojo esta call no necesito snippet solo contentDetails.
     // todo cache calls to this api. for now volume is low for 10k daily limit.
@@ -209,7 +185,7 @@ export class PostsService {
   }
 
   async createVideoPost(channelId: string, data: CreateVideoPost) {
-    const image = await this.validateImage(data.thumbnail);
+    const image = await validateImage(data.thumbnail);
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
     const file = await this.files.createManagedFile('img', image, true);
