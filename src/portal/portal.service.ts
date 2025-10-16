@@ -1,20 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { fileMetaToUrlFallback } from '../utils/utils';
+import { UpdateChannel } from './dtos/updateChannel/updateChannel';
+import { validateImage } from '../utils/utils';
+import { ManagedFilesService } from '../managed-files/managed-files.service';
 
 @Injectable()
 export class PortalService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly files: ManagedFilesService,
+  ) {}
 
-  updateChannel(id: string, newName: string) {
-    return this.prisma.channels.update({
-      where: {
-        id: id,
-      },
-      data: {
-        name: newName,
-      },
-    });
+  async updateChannel(id: string, data: UpdateChannel) {
+    let changes = false;
+    const newData = {};
+    if (data.newChannelName) {
+      changes = true;
+      newData['name'] = data.newChannelName;
+    }
+
+    if (data.newThumbnail) {
+      changes = true;
+      const img = await validateImage(data.newThumbnail); // todo adjust parameters i.e. the dimensionss xy
+      const file = await this.files.createManagedFile('img', img, true);
+      // todo set the old file to be removed i.e. call files remove method.
+      newData['avatarFileId'] = file.id;
+    }
+
+    if (changes) {
+      return this.prisma.channels.update({
+        where: {
+          id: id,
+        },
+        data: newData,
+      });
+    } else {
+      return 'No changes provided!';
+    }
   }
 
   async getAvatar(id: string | null) {

@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
-  Post,
+  Patch,
   Query,
   Req,
   UseGuards,
@@ -29,18 +29,13 @@ export class PortalController {
 
   @HttpCode(204)
   @UseGuards(AuthGuard)
-  @Post('channel')
+  @Patch('channel')
   async updateChannel(
     @Req() request: AuthenticatedAccount,
     @Body() body: UpdateChannel,
   ) {
-    await this.portalService.updateChannel(
-      request.channel.id,
-      body.newChannelName,
-    );
+    await this.portalService.updateChannel(request.channel.id, body);
   }
-
-  //todo update channel avatar
 
   @UseGuards(AuthGuard)
   @Get('posts')
