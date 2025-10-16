@@ -22,9 +22,9 @@ export class PortalService {
 
     if (data.newThumbnail) {
       changes = true;
-      const img = await validateImage(data.newThumbnail); // todo adjust parameters i.e. the dimensionss xy
+      const img = await validateImage(data.newThumbnail, 200, 200);
       const file = await this.files.createManagedFile('img', img, true);
-      // todo set the old file to be removed i.e. call files remove method.
+      // todo set the old file to be removed i.e. call files remove method? or should it like just count how many are using the file? if 0 delete?
       newData['avatarFileId'] = file.id;
     }
 

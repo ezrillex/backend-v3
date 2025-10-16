@@ -38,7 +38,11 @@ export function prefixToExtMime(prefix: string) {
   }
 }
 
-export async function validateImage(base64: string) {
+export async function validateImage(
+  base64: string,
+  width: number,
+  height: number,
+) {
   let meta: sharp.Metadata;
   let imageBuffer: Buffer;
 
@@ -55,9 +59,8 @@ export async function validateImage(base64: string) {
   if (meta.hasAlpha) {
     throw new BadRequestException('Transparency not allowed');
   }
-  if (meta.width !== 1280 || meta.height !== 720) {
+  if (meta.width !== width || meta.height !== height) {
     throw new BadRequestException('Image dimensions must be 1280x720');
   }
-
   return imageBuffer;
 }
