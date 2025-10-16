@@ -99,7 +99,7 @@ export class PostsService {
   }
 
   async createVideoRepost(channelId: string, data: CreateVideoRepost) {
-    const image = await validateImage(data.thumbnail);
+    const image = await validateImage(data.thumbnail, 1280, 720);
 
     // 2. validar id de youtube con la api, obtengo duracion. ojo esta call no necesito snippet solo contentDetails.
     // todo cache calls to this api. for now volume is low for 10k daily limit.
@@ -185,7 +185,7 @@ export class PostsService {
   }
 
   async createVideoPost(channelId: string, data: CreateVideoPost) {
-    const image = await validateImage(data.thumbnail);
+    const image = await validateImage(data.thumbnail, 1280, 720);
 
     // upload image to bucket gets the id and url // todo figure out what happens when future steps fails.
     const file = await this.files.createManagedFile('img', image, true);

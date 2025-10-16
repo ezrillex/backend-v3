@@ -27,14 +27,14 @@ export class PortalController {
     };
   }
 
-  @HttpCode(204)
+  @HttpCode(200)
   @UseGuards(AuthGuard)
   @Patch('channel')
   async updateChannel(
     @Req() request: AuthenticatedAccount,
     @Body() body: UpdateChannel,
   ) {
-    await this.portalService.updateChannel(request.channel.id, body);
+    return this.portalService.updateChannel(request.channel.id, body);
   }
 
   @UseGuards(AuthGuard)
