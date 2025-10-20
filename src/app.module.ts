@@ -8,6 +8,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma/prisma.module';
 import { ManagedFilesModule } from './managed-files/managed-files.module';
 import { ChannelsModule } from './channels/channels.module';
+import { AuthModule } from '@thallesp/nestjs-better-auth';
+import { auth } from './auth/auth';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { ChannelsModule } from './channels/channels.module';
     PrismaModule,
     ManagedFilesModule,
     ChannelsModule,
+    AuthModule.forRoot({ auth }),
   ],
   controllers: [AppController],
   providers: [AppService],
