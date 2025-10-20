@@ -27,13 +27,10 @@ enum Prefixes {
 }
 
 model Channels {
-  id      String @id @default(uuid(7)) @db.Uuid
-  clerkId String @default("") // todo remove default
+  id String @id @default(uuid(7)) @db.Uuid
 
-  name  String  @default("Nuevo Canal") // todo when resetting delete default
+  name  String
   posts Posts[]
-
-  // todo index clerk id
 
   avatarFile   ManagedFile? @relation(fields: [avatarFileId], references: [id])
   avatarFileId String?      @db.Uuid
