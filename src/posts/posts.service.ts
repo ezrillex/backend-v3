@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateVideoRepost } from './dto/CreateVideoRepost';
 import { UpdatePostDto } from './dto/UpdatePostDto';
@@ -32,7 +33,7 @@ export class PostsService {
     // convert seconds to duration string
     const duration = this.secondsToDurationString(data.duration);
     // get video by id
-    const post = await this.prisma.posts.findUniqueOrThrow({
+    const post = await this.prisma.posts.findUnique({
       where: {
         id: data.id,
       },
@@ -47,6 +48,10 @@ export class PostsService {
         },
       },
     });
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
 
     if (post.type !== PostTypes.Video) {
       throw new BadRequestException('post type is not video');
@@ -176,9 +181,9 @@ export class PostsService {
     return {
       ...createResult,
       likes: 0,
+      views: 0,
       video: {
         ...createResult.video,
-        views: 0,
         thumbnailUrl: file.url,
       },
     }; // return 201 created?
@@ -211,9 +216,9 @@ export class PostsService {
     return {
       ...createResult,
       likes: 0,
+      views: 0,
       video: {
         ...createResult.video,
-        views: 0,
         thumbnailUrl: file.url,
       },
     }; // return 201 created? // todo frontend show 'upload code' which is uuid of post. link to gform
@@ -238,6 +243,7 @@ export class PostsService {
     return {
       ...createResult,
       likes: 0,
+      views: 0,
     }; // return 201 created?
   }
 
@@ -351,7 +357,10 @@ export class PostsService {
   }
 
   async findOne(id: string) {
-    const data = await this.prisma.posts.findFirstOrThrow({
+    const data = await this.prisma.posts.findUnique({
+      where: {
+        id: id,
+      },
       select: {
         type: true,
         views: true,
@@ -367,6 +376,10 @@ export class PostsService {
         },
       },
     });
+    if (!data) {
+      throw new NotFoundException('Record not found');
+    }
+
     //data.channels as { id: string; name: string; avatar: string }
     const cleanData = {
       type: data.type,
