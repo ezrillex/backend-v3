@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "public"."Posts" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
