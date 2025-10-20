@@ -27,15 +27,16 @@ enum Prefixes {
 }
 
 model Channels {
-  id      String  @id @default(uuid(7)) @db.Uuid
-  clerkId String  @default("") // todo remove default
-  name    String  @default("Nuevo Canal") // todo when resetting delete default
-  posts   Posts[]
+  id String @id @default(uuid(7)) @db.Uuid
 
-  // todo index clerk id
+  name  String
+  posts Posts[]
 
   avatarFile   ManagedFile? @relation(fields: [avatarFileId], references: [id])
   avatarFileId String?      @db.Uuid
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique // db uuid mismatch with id is string.
 }
 
 model Posts {
@@ -99,6 +100,7 @@ model ManagedFile {
 }
 
 //tbd
+
 model ImagePost {
   id     String @id @default(uuid(7)) @db.Uuid
   url    String
@@ -107,6 +109,7 @@ model ImagePost {
 }
 
 // tbd
+
 model ImageTextPost {
   id     String @id @default(uuid(7)) @db.Uuid
   url    String
@@ -116,6 +119,7 @@ model ImageTextPost {
 }
 
 // tbd
+
 model AudioPost {
   id     String @id @default(uuid(7)) @db.Uuid
   url    String
@@ -139,4 +143,65 @@ model WebSeeds {
 
   video   VideoPost @relation(fields: [videoId], references: [id])
   videoId String    @db.Uuid
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  channel       Channels? // todo crear al mismo tiempo en api.
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
 }
