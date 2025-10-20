@@ -149,6 +149,7 @@ export class PortalService {
         return {
           ...item,
           likes: item.likes.toString(),
+          views: item.views.toString(),
         };
       }),
       pageCount,
