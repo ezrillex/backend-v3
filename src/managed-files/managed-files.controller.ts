@@ -5,8 +5,8 @@ import { ManagedFilesService } from './managed-files.service';
 export class ManagedFilesController {
   constructor(private readonly managedFilesService: ManagedFilesService) {}
 
-  @Post()
-  test() {
-    //return this.managedFilesService.createManagedFile('prefijo', 'text/plain');
-  }
+  // @Post()
+  // test() {
+  //   //return this.managedFilesService.createManagedFile('prefijo', 'text/plain');
+  // }
 }

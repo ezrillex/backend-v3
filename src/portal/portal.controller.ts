@@ -4,21 +4,29 @@ import {
   Get,
   HttpCode,
   Patch,
+  Post,
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PortalService } from './portal.service';
-import { AuthGuard } from '../auth/auth.guard';
 import { UpdateChannel } from './dtos/updateChannel/updateChannel';
 import { GetPostsPaginated } from './dtos/getPostsPaginated/getPostsPaginated';
 import { AuthenticatedAccount } from '../auth/AuthenticatedAccount';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+import { PrismaService } from '../prisma/prisma.service';
+import { AdminGuard } from '../auth/admin/admin.guard';
+import { AddChannelInterceptor } from '../auth/AddChannel/AddChannel.interceptor';
 
 @Controller('portal')
 export class PortalController {
-  constructor(private readonly portalService: PortalService) {}
+  constructor(
+    private readonly portalService: PortalService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-  @UseGuards(AuthGuard)
+  @UseInterceptors(AddChannelInterceptor)
   @Get('channel')
   async getChannel(@Req() request: AuthenticatedAccount) {
     return {
@@ -28,7 +36,7 @@ export class PortalController {
   }
 
   @HttpCode(200)
-  @UseGuards(AuthGuard)
+  @UseInterceptors(AddChannelInterceptor)
   @Patch('channel')
   async updateChannel(
     @Req() request: AuthenticatedAccount,
@@ -37,7 +45,7 @@ export class PortalController {
     return this.portalService.updateChannel(request.channel.id, body);
   }
 
-  @UseGuards(AuthGuard)
+  @UseInterceptors(AddChannelInterceptor)
   @Get('posts')
   getPosts(
     @Req() request: AuthenticatedAccount,
@@ -46,9 +54,25 @@ export class PortalController {
     return this.portalService.getPosts(request.channel.id, query.page);
   }
 
-  @UseGuards(AuthGuard)
+  @UseInterceptors(AddChannelInterceptor)
   @Get('stats')
   getStats(@Req() request: AuthenticatedAccount) {
     return this.portalService.getStats(request.channel.id);
+  }
+
+  // todo admin only token protected.
+  @AllowAnonymous()
+  @UseGuards(AdminGuard)
+  @UseInterceptors(AddChannelInterceptor)
+  @Post('test')
+  inviteUser() {
+    return 'testing 123';
+    // return this.prisma.user.create({
+    //   data: {
+    //     id: randomUUID(),
+    //     name: 'Juan Gomez',
+    //     email: 'ezra.alejandro.abarca.cordova@gmail.com',
+    //   },
+    // });
   }
 }
