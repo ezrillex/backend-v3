@@ -18,7 +18,7 @@ export class AppController {
     return this.appService.getHomePage();
   }
 
-  @UseInterceptors(AddChannelInterceptor)
+  // @UseInterceptors(AddChannelInterceptor)
   @Get('dev')
   async dev(@Session() session: UserSession, @Req() req: Request) {
     // console.log(session);

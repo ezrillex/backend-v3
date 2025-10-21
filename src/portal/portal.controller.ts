@@ -18,6 +18,8 @@ import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import { PrismaService } from '../prisma/prisma.service';
 import { AdminGuard } from '../auth/admin/admin.guard';
 import { AddChannelInterceptor } from '../auth/AddChannel/AddChannel.interceptor';
+import { randomUUID } from 'node:crypto';
+import { EmailDto } from './dtos/email/Email.dto';
 
 @Controller('portal')
 export class PortalController {
@@ -60,19 +62,17 @@ export class PortalController {
     return this.portalService.getStats(request.channel.id);
   }
 
-  // todo admin only token protected.
+  // creates user in better auth allowing it to login with google and link the account given the email matches.
   @AllowAnonymous()
   @UseGuards(AdminGuard)
-  @UseInterceptors(AddChannelInterceptor)
-  @Post('test')
-  inviteUser() {
-    return 'testing 123';
-    // return this.prisma.user.create({
-    //   data: {
-    //     id: randomUUID(),
-    //     name: 'Juan Gomez',
-    //     email: 'ezra.alejandro.abarca.cordova@gmail.com',
-    //   },
-    // });
+  @Post('invite_user')
+  inviteUser(@Body() data: EmailDto) {
+    return this.prisma.user.create({
+      data: {
+        id: randomUUID(),
+        name: data.email,
+        email: data.email,
+      },
+    });
   }
 }
