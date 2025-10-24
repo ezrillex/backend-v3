@@ -37,6 +37,8 @@ model Channels {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique // db uuid mismatch with id is string.
+
+  @@index([avatarFileId]) // join/include avatar
 }
 
 model Posts {
@@ -61,6 +63,9 @@ model Posts {
   text      TextPost? // implemented yes
   imageText ImageTextPost?
   audio     AudioPost?
+
+  @@index([createdAt])
+  @@index([id])
 }
 
 model VideoPost {
