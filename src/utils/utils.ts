@@ -8,6 +8,11 @@ export function fileMetaToUrl(meta: { prefix: string; id: string }) {
   return `https://redacted.invalid/${meta.prefix}/${meta.id}${prefixToExtMime(meta.prefix).ext}`;
 }
 
+export function fileMetaToKey(meta: { prefix: string; id: string }) {
+  const extension = prefixToExtMime(meta.prefix);
+  return `${meta.prefix}/${meta.id}${extension.ext}`;
+}
+
 export function fileMetaToUrlFallback(
   meta: { prefix: string; id: string } | null,
   fallback: string,

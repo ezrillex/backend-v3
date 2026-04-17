@@ -20,7 +20,7 @@ export class AppService {
   }
 
   async getHomePage(): Promise<object> {
-    const data = await this.prisma.posts.findMany({
+    const postsPromise = this.prisma.posts.findMany({
       select: {
         id: true,
         type: true,
@@ -54,9 +54,8 @@ export class AppService {
       },
       take: 11,
     });
-
     // todo count how many records, choose 5 at random through a randomizer
-    const channels = await this.prisma.channels.findMany({
+    const channelsPromise = this.prisma.channels.findMany({
       include: {
         avatarFile: true,
         _count: {
@@ -67,6 +66,8 @@ export class AppService {
       },
       take: 5,
     });
+
+    const [data, channels] = await Promise.all([postsPromise, channelsPromise]);
 
     return {
       latest: data.map((post) => {

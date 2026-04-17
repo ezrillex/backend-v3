@@ -5,9 +5,13 @@ import {
   ListObjectsV2Command,
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 import * as crypto from 'crypto';
 import { prefixToExtMime } from '../utils/utils';
+import { isUUID } from 'class-validator';
+import { fileMetaToKey } from '../utils/utils';
+import { Cron } from '@nestjs/schedule';
 
 // que voy a guardar aqui: imagenes, audios????, torrent files,
 @Injectable()
@@ -107,5 +111,140 @@ export class ManagedFilesService implements OnModuleInit {
   getManagedFile(id: string) {}
 
   // sync / sincroniza archivos / borra los sin referencias / manda warnings de missing files.
-  syncManagedFiles() {}
+  async syncManagedFiles() {
+    // obtener lista de archivos en bucket
+    const bucketObjects: any[] = [];
+    let ContinuationToken: string | undefined;
+
+    do {
+      const res = await this.s3.send(
+        new ListObjectsV2Command({
+          Bucket: 'dev-vcris', // todo load this from .env,
+          ContinuationToken: ContinuationToken,
+          // MaxKeys: 2,
+        }),
+      );
+      // todo check if res is ok 200.
+      if (res.$metadata.httpStatusCode !== 200) {
+        console.log('failed to get bucket files list. error:');
+        console.log(res);
+        return 'Finished';
+      }
+
+      bucketObjects.push(...(res.Contents || []));
+      ContinuationToken = res.NextContinuationToken;
+    } while (ContinuationToken);
+
+    // validar que los archivos en la bucket existen en la base de datos
+    if (bucketObjects.length === 0) {
+      return 'Done: bucket length 0';
+    }
+
+    const omitKeys = ['img/default_avatar.webp'];
+    // omitir archivos excepcionales / hard coded / sin registro en db ie. default avatar.
+    for (let i = bucketObjects.length - 1; i >= 0; i--) {
+      if (omitKeys.includes(bucketObjects[i].Key)) {
+        bucketObjects.splice(i, 1);
+      }
+    }
+
+    const ids: string[] = [];
+    for (let i = 0; i < bucketObjects.length; i++) {
+      bucketObjects[i]['id'] = keyToId(bucketObjects[i].Key);
+      if (bucketObjects[i].id) {
+        ids.push(bucketObjects[i].id);
+      }
+    }
+
+    // buscar en base de datos los ids que estan en el bucket.
+    const integrityCount = await this.prisma.managedFile.count({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    console.log('bucket count: ', bucketObjects.length);
+    console.log('found files in db: ', integrityCount);
+    if (bucketObjects.length === integrityCount) {
+      return 'Done, files & integrity match';
+    }
+
+    // si no match integrity buscar los que no estan.
+
+    // borrar archivos que no estan en la base de datos / or send notification so that I review this.
+    // todo should this be manual to avoid data loss?
+    return bucketObjects;
+  }
+
+  @Cron('0 2 * * *')
+  async cleanupUnusedFiles() {
+    // buscar archivos sin referencias
+    const noRefsFilesObj = await this.prisma.managedFile.findMany({
+      where: {
+        thumbnails: { none: {} },
+        torrents: { none: {} },
+        avatars: { none: {} },
+      },
+      select: {
+        id: true,
+        prefix: true,
+      },
+    });
+    console.log(
+      new Date().toDateString(),
+      '   |   Files to delete, cleanup unused files job:',
+    );
+    console.log(noRefsFilesObj);
+    const noRefsFilesIds = noRefsFilesObj.map((file) => file.id);
+
+    const noRefsFilesKeys = noRefsFilesObj.map((file) => {
+      return {
+        Key: fileMetaToKey(file),
+      };
+    });
+    // borrar archivos sin referencias de los archivos y de la db.
+
+    if (noRefsFilesIds.length > 0) {
+      const deleteResult = await this.s3.send(
+        new DeleteObjectsCommand({
+          Bucket: 'dev-vcris', // todo load this from .env
+          Delete: {
+            Quiet: false,
+            Objects: noRefsFilesKeys,
+          },
+        }),
+      );
+
+      // check if delete was ok, then delete from db. if failed it will not remove our reference.
+      if (deleteResult.$metadata.httpStatusCode === 200) {
+        // delete record from db
+        await this.prisma.managedFile.deleteMany({
+          where: {
+            id: {
+              in: noRefsFilesIds,
+            },
+          },
+        });
+      }
+    }
+  }
+}
+// if the key does not match to a malformed id it returns undefined.
+function keyToId(key: string): string | null {
+  if (!(key.startsWith('img/') || key.startsWith('wtt/'))) {
+    return null; // no valid prefix
+  }
+  if (!(key.endsWith('.webp') || key.endsWith('.torrent'))) {
+    return null; // no valid file format
+  }
+  const filename = key.split('/')[1];
+  const id = filename.split('.')[0];
+  // validar uuid format.
+  if (isUUID(id)) {
+    return id;
+  } else {
+    return null;
+  }
 }

@@ -19,22 +19,10 @@ export class AppController {
   }
 
   // @UseInterceptors(AddChannelInterceptor)
-  @Get('dev')
-  async dev(@Session() session: UserSession, @Req() req: Request) {
-    // console.log(session);
-    // console.log(req);
-
-    return this.prisma.managedFile.findMany({
-      where: {
-        thumbnails: { none: {} },
-        torrents: { none: {} },
-        avatars: { none: {} },
-      },
-      include: {
-        thumbnails: true,
-        avatars: true,
-        torrents: true,
-      },
-    });
-  }
+  // @AllowAnonymous()
+  // @Get('dev')
+  // async dev(@Session() session: UserSession, @Req() req: Request) {
+  //   // console.log(session);
+  //   // console.log(req);
+  // }
 }
